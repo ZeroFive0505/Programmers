@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31129.286
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Skill Tree", "Skill Tree\Skill Tree.vcxproj", "{453363FC-507E-4BA1-B077-ECF2F5EB35C7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{453363FC-507E-4BA1-B077-ECF2F5EB35C7}.Debug|x64.ActiveCfg = Debug|x64
+		{453363FC-507E-4BA1-B077-ECF2F5EB35C7}.Debug|x64.Build.0 = Debug|x64
+		{453363FC-507E-4BA1-B077-ECF2F5EB35C7}.Debug|x86.ActiveCfg = Debug|Win32
+		{453363FC-507E-4BA1-B077-ECF2F5EB35C7}.Debug|x86.Build.0 = Debug|Win32
+		{453363FC-507E-4BA1-B077-ECF2F5EB35C7}.Release|x64.ActiveCfg = Release|x64
+		{453363FC-507E-4BA1-B077-ECF2F5EB35C7}.Release|x64.Build.0 = Release|x64
+		{453363FC-507E-4BA1-B077-ECF2F5EB35C7}.Release|x86.ActiveCfg = Release|Win32
+		{453363FC-507E-4BA1-B077-ECF2F5EB35C7}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F50EADB6-95BC-40A6-9D7A-D238ABF88B6B}
+	EndGlobalSection
+EndGlobal
