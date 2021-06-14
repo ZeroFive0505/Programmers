@@ -4,6 +4,8 @@
 
 using namespace std;
 
+const int INF = 987654321;
+
 vector<string> Convert(string s, int n)
 {
     vector<string> v;
@@ -19,23 +21,21 @@ vector<string> Convert(string s, int n)
 int solution(string s) 
 {
 
-    int answer = 0;
+    int answer = INF;
     vector<string> tokens;
     string before;
-    int cnt = 1;
+    int cnt;
 
-    answer = s.length();
-
-    for (int i = 1; i <= s.length() / 2; i++)
+    for (int i = 1; i <= s.size() / 2; i++)
     {
-        tokens = Convert(s, i);
-        string cmp;
-        before = tokens[0];
         cnt = 1;
+        tokens = Convert(s, i);
+        before = *tokens.begin();
+        string cmp;
 
         for (int j = 1; j < tokens.size(); j++)
         {
-            if (tokens[j] == before)
+            if (before == tokens[j])
                 cnt++;
             else
             {
@@ -50,8 +50,8 @@ int solution(string s)
         if (cnt != 1)
             cmp += to_string(cnt);
         cmp += before;
-        
-        answer = answer < cmp.length() ? answer : cmp.length();
+
+        answer = answer > cmp.size() ? cmp.size() : answer;
     }
 
     return answer;
@@ -59,7 +59,7 @@ int solution(string s)
 
 int main()
 {
-    string s = "xababcdcdababcdcd";
+    string s = "aabbaccc";
     cout << solution(s) << "\n";
     return 0;
 }

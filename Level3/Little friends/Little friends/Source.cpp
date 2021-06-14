@@ -2,6 +2,7 @@
 #include <string>
 #include <map>
 #include <queue>
+#include <ctype.h>
 #include <vector>
 
 using namespace std;
@@ -29,51 +30,62 @@ map<char, Pos> hashMap;
 
 Pos BFS(Pos v, char ch)
 {
-    queue<Pos> q;
-    vector<vector<int>> turns(M, vector<int>(N, INF));
+    vector<vector<int>> turnCnts(M, vector<int>(N, INF));
 
     v.dir = -1;
+    queue<Pos> q;
     q.push(v);
-    turns[v.r][v.c] = 0;
+    turnCnts[v.r][v.c] = 0;
 
     bool not_first = false;
 
+    auto check = [&](const int r, const int c) {
+        if (r >= M || c >= N)
+            return true;
+        else if (r < 0 || c < 0)
+            return true;
+        else
+            return false;
+    };
+
     while (!q.empty())
     {
-        Pos now = q.front();
+        Pos current = q.front();
         q.pop();
 
-        if (not_first && B[now.r][now.c] == ch)
-            return { now.r, now.c };
+        if (not_first && B[current.r][current.c] == ch)
+            return { current.r, current.c };
+
         not_first = true;
 
         for (int i = 0; i < 4; i++)
         {
-            int nextR = now.r + Delta[i].r;
-            int nextC = now.c + Delta[i].c;
+            int nextR = current.r + Delta[i].r;
+            int nextC = current.c + Delta[i].c;
 
             int nextDir = i;
 
-            int next_turn = turns[now.r][now.c];
+            int turn = turnCnts[current.r][current.c];
 
-            if (now.dir != -1 && now.dir != nextDir)
-                next_turn++;
+            if (current.dir != -1 && current.dir != nextDir)
+                turn++;
 
-            if (nextR < 0 || nextR >= M || nextC < 0 || nextC >= N)
+            if (check(nextR, nextC))
                 continue;
 
-            if (next_turn >= 2)
+            if (turn >= 2)
                 continue;
 
             if (B[nextR][nextC] != '.' && B[nextR][nextC] != ch)
                 continue;
 
-            if (turns[nextR][nextC] >= next_turn)
+            if (turnCnts[nextR][nextC] >= turn)
             {
                 q.push({ nextR, nextC, nextDir });
-                turns[nextR][nextC] = next_turn;
+                turnCnts[nextR][nextC] = turn;
             }
         }
+        
     }
 
     return { -1, -1 };
@@ -82,6 +94,7 @@ Pos BFS(Pos v, char ch)
 string solution(int m, int n, vector<string> board)
 {
     string answer;
+
     M = m;
     N = n;
     B = board;
@@ -90,33 +103,35 @@ string solution(int m, int n, vector<string> board)
     {
         for (int j = 0; j < n; j++)
         {
-            if (board[i][j] >= 'A' && board[i][j] <= 'Z')
+            if (isalpha(board[i][j]))
                 hashMap[board[i][j]] = { i, j };
         }
     }
 
     while (1)
     {
-        bool canRemove = false;
+        bool removal = false;
 
-        for (const auto& letter : hashMap)
+
+        for (const auto& kv : hashMap)
         {
-            char ch = letter.first;
-            Pos start = letter.second;
+            char ch = kv.first;
+            Pos start = kv.second;
+
             Pos dest = BFS(start, ch);
 
             if (dest.r != -1 && dest.c != -1)
             {
-                canRemove = true;
-                B[start.r][start.c] = '.';
                 B[dest.r][dest.c] = '.';
-                answer += ch;
+                B[start.r][start.c] = '.';
                 hashMap.erase(ch);
+                answer.push_back(ch);
+                removal = true;
                 break;
             }
         }
 
-        if (canRemove)
+        if (removal)
             continue;
 
         if (hashMap.empty())
@@ -125,7 +140,6 @@ string solution(int m, int n, vector<string> board)
             return "IMPOSSIBLE";
     }
 
-
     return answer;
 }
 
@@ -133,10 +147,10 @@ int main()
 {
     int m, n;
 
-    m = 4;
-    n = 4;
+    m = 3;
+    n = 3;
 
-    vector<string> board = { "FGHEI", "BAB..", "D.C*.", "CA..I", "DFHGE" };
+    vector<string> board = { "DBA", "C*A", "CDB" };
 
     cout << solution(m, n, board) << "\n";
 

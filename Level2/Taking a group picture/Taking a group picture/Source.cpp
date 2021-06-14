@@ -5,42 +5,50 @@
 
 using namespace std;
 
-bool ConditionCheck(char comp, int dist, int num)
+bool check(char comp, int dist, int realDist)
 {
-    if (comp == '=')
-        return dist == num;
-    else if (comp == '>')
-        return dist > num;
-    else if (comp == '<')
-        return dist < num;
+    switch (comp)
+    {
+    case '=':
+        return dist == realDist;
+        break;
+    case '>':
+        return realDist > dist;
+        break;
+    case '<':
+        return realDist < dist;
+        break;
+    }
 }
 
 int solution(int n, vector<string> data) 
 {
     int answer = 0;
     string friends = "ACFJMNRT";
+    sort(friends.begin(), friends.end());
 
     do
     {
-        int size = data.size();
         bool match = true;
-        for (int i = 0; i < size; i++)
+        for (int i = 0; i < n; i++)
         {
             string d = data[i];
-            char a = d[0];
-            int aPos = friends.find(a);
-            char b = d[2];
-            int bPos = friends.find(b);
-            char c = d[3];
-            int dist = d[4] - '0';
+            char friendA = d[0];
+            char friendB = d[2];
 
-            int diff = abs(aPos - bPos) - 1;
+            char comp = d[3];
 
-            if (!ConditionCheck(c, diff, dist))
-            {
-                match = false;
-                break;
-            }
+            char dist = d[4];
+
+            
+            int realDist = friends.find(friendA) - friends.find(friendB);
+            realDist = abs(realDist) - 1;
+
+            if (check(comp, dist - '0', realDist))
+                continue;
+
+            match = false;
+            break;
         }
 
         if (match)
@@ -48,15 +56,14 @@ int solution(int n, vector<string> data)
 
     } while (next_permutation(friends.begin(), friends.end()));
 
-
     return answer;
 }
 
 int main()
 {
     vector<string> d = {
-        {"N~F=0"},
-        {"R~T>2"}
+        {"M~C<2"},
+        {"C~M>1"}
     };
 
     int n = 2;

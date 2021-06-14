@@ -8,39 +8,40 @@ using namespace std;
 
 vector<int> solution(vector<string> gems) 
 {
-    vector<int> answer;
-    unordered_map<string, int> hash;
-
+    vector<int> answer(2);
+    unordered_map<string, int> hashMap;
     set<string> s(gems.begin(), gems.end());
 
-    int m;
-    int start = 0, end = 0;
-
-    for (auto i : gems)
+    int start = 0;
+    int end = 0;
+    for (int i = 0; gems.size(); i++)
     {
-        hash[i]++;
-        if (hash.size() == s.size())
+        string key = gems[i];
+        hashMap[key]++;
+        if (hashMap.size() == s.size())
             break;
         end++;
     }
+    int m = end - start;
 
-    m = end - start;
-    answer.push_back(start + 1);
-    answer.push_back(end + 1);
+    answer[0] = start + 1;
+    answer[1] = end + 1;
 
+  
     while (end < gems.size())
     {
         string key = gems[start];
-        hash[key]--;
+        hashMap[key]--;
         start++;
 
-        if (hash[key] == 0)
+        if (hashMap[key] == 0)
         {
             end++;
             for (; end < gems.size(); end++)
             {
-                hash[gems[end]]++;
-                if (key == gems[end])
+                hashMap[gems[end]]++;
+
+                if (hashMap[key] != 0)
                     break;
             }
 
@@ -50,10 +51,11 @@ vector<int> solution(vector<string> gems)
 
         if (m > end - start)
         {
+            m = end - start;
             answer[0] = start + 1;
             answer[1] = end + 1;
-            m = end - start;
         }
+
     }
 
     return answer;
@@ -62,7 +64,7 @@ vector<int> solution(vector<string> gems)
 int main()
 {
     vector<string> gems = {
-      "AA", "AB", "AC", "AA", "AC"
+      "DIA", "RUBY", "RUBY", "DIA", "DIA", "EMERALD", "SAPPHIRE", "DIA"
     };
 
     vector<int> ans = solution(gems);

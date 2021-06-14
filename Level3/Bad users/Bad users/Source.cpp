@@ -13,38 +13,39 @@ bool check[SIZE];
 
 set<int> s;
 
-void DFS(vector<string>& user_id, vector<string>& banned_id, int i, int num, int len)
+void DFS(vector<string>& user_id, vector<string>& banned_id, int idx, int n, int len)
 {
-    if (i == len)
+    if (idx == len)
     {
-        s.insert(num);
+        s.insert(n);
         return;
     }
 
-    for (int j = 0; j < user_id.size(); j++)
+    for (int i = 0; i < user_id.size(); i++)
     {
-        int k;
 
-        if (user_id[j].size() != banned_id[i].size())
+        int j;
+
+        if (user_id[i].size() != banned_id[idx].size())
             continue;
 
-        if (check[j])
+        if (check[i])
             continue;
 
-        for (k = 0; k < user_id[j].size(); k++)
+        for (j = 0; j < user_id[i].size(); j++)
         {
-            if (banned_id[i][k] == '*')
+            if (banned_id[idx][j] == '*')
                 continue;
-            
-            if (user_id[j][k] != banned_id[i][k])
+
+            if (user_id[i][j] != banned_id[idx][j])
                 break;
         }
 
-        if (k == user_id[j].size())
+        if (j == user_id[i].size())
         {
-            check[j] = true;
-            DFS(user_id, banned_id, i + 1, num | (1 << j), len);
-            check[j] = false;
+            check[i] = true;
+            DFS(user_id, banned_id, idx + 1, n | (1 << i), len);
+            check[i] = false;
         }
     }
 }
@@ -60,18 +61,11 @@ int solution(vector<string> user_id, vector<string> banned_id)
 int main()
 {
     vector<string> user_id = {
-        "frodo",
-        "frodi",
-        "crodo",
-        "abc123",
-        "frodoc"
+        "frodo", "fradi", "crodo", "abc123", "frodoc"
     };
 
     vector<string> banned_id = {
-        "fr*d*",
-        "*rodo",
-        "******",
-        "******"
+        "fr*d*", "abc1**"
     };
 
     cout << solution(user_id, banned_id) << "\n";

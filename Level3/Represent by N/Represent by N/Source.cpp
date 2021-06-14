@@ -27,14 +27,11 @@ int solution(int N, int number)
     int answer = -1;
 
     vector<set<int>> v(8);
-    
-    int idx = 1;
+
+    int cnt = 1;
 
     for (auto& i : v)
-    {
-        i.insert(GetN_Number(N, idx));
-        idx++;
-    }
+        i.insert(GetN_Number(N, cnt++));
 
     for (int i = 1; i < 8; i++)
     {
