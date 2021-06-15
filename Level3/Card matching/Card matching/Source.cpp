@@ -40,9 +40,9 @@ struct sDelta
 
 int BFS(sPoint current, sPoint dest)
 {
-    vector<vector<bool>> visited(4, vector<bool>(4, false));
-
     queue<sPoint> q;
+
+    vector<vector<bool>> visited(4, vector<bool>(4, false));
 
     q.push(current);
 
@@ -54,12 +54,13 @@ int BFS(sPoint current, sPoint dest)
         if (cur == dest)
             return cur.cnt;
 
+
         for (int i = 0; i < 4; i++)
         {
             int nr = cur.row + Delta[i].row;
             int nc = cur.col + Delta[i].col;
 
-            if (nr < 0 || nc < 0 || nr > 3 || nc > 3)
+            if (nr < 0 || nr > 3 || nc < 0 || nc > 3)
                 continue;
 
             if (!visited[nr][nc])
@@ -68,12 +69,13 @@ int BFS(sPoint current, sPoint dest)
                 q.push({ nr, nc, cur.cnt + 1 });
             }
 
+
             for (int j = 0; ; j++)
             {
                 if (BOARD[nr][nc] != 0)
                     break;
 
-                if (nr + Delta[i].row < 0 || nr + Delta[i].row > 3 ||
+                if (nr + Delta[i].row < 0 || nr + Delta[i].row > 3 || 
                     nc + Delta[i].col < 0 || nc + Delta[i].col > 3)
                     break;
 
@@ -95,34 +97,34 @@ int BFS(sPoint current, sPoint dest)
 int Permutate(sPoint current)
 {
     int ret = INF;
-
     for (int card = 1; card < CARDS; card++)
     {
-        vector<sPoint> cards;
-
-        for (int i = 0; i < SIZE; i++)
+        vector<sPoint> cardList;
+        for (int i = 0; i < BOARD.size(); i++)
         {
-            for (int j = 0; j < SIZE; j++)
+            for (int j = 0; j < BOARD[i].size(); j++)
             {
                 if (BOARD[i][j] == card)
-                    cards.push_back({ i, j, 0 });
+                    cardList.push_back({ i, j, 0 });
             }
         }
 
-        if (cards.empty())
+
+        if (cardList.empty())
             continue;
 
-        int first = BFS(current, cards[0]) + BFS(cards[0], cards[1]) + 2;
-        int second = BFS(current, cards[1]) + BFS(cards[1], cards[0]) + 2;
+        int first = BFS(current, cardList[0]) + BFS(cardList[0], cardList[1]) + 2;
+        int second = BFS(current, cardList[1]) + BFS(cardList[1], cardList[0]) + 2;
 
         for (int i = 0; i < 2; i++)
-            BOARD[cards[i].row][cards[i].col] = 0;
+            BOARD[cardList[i].row][cardList[i].col] = 0;
 
-        ret = min(ret, first + Permutate(cards[1]));
-        ret = min(ret, second + Permutate(cards[0]));
+        ret = min(ret, first + Permutate(cardList[1]));
+        ret = min(ret, second + Permutate(cardList[0]));
 
         for (int i = 0; i < 2; i++)
-            BOARD[cards[i].row][cards[i].col] = card;
+            BOARD[cardList[i].row][cardList[i].col] = card;
+
     }
 
     if (ret == INF)

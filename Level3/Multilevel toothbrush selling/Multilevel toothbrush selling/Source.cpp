@@ -36,6 +36,9 @@ vector<int> solution(vector<string> enroll, vector<string> referral, vector<stri
             {
                 double p = (int)(money * 0.1);
 
+                if (p <= 0.0f)
+                    break;
+
                 if (ref == "-")
                 {
                     if (p >= 1)

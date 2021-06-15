@@ -16,25 +16,27 @@ struct sPage
 
 int solution(string word, vector<string> pages) 
 {
-    int size = word.size();
+    int wsize = word.size();
+    int answer = 0;
     map<string, int> pageHash;
-    vector<sPage> v;
     transform(word.begin(), word.end(), word.begin(), ::tolower);
+
+    vector<sPage> v;
 
     for (int i = 0; i < pages.size(); i++)
     {
         string& html = pages[i];
-        transform(html.begin(), html.end(), html.begin(), ::tolower);
 
-        int mid = 0;
+        transform(html.begin(), html.end(), html.begin(), ::towlower);
+
         int left = 0;
+        int mid = 0;
         int right;
 
         while (mid <= left)
         {
             left = html.find("<meta", left + 1);
             right = html.find(">", left);
-
             mid = html.rfind("https://", right);
         }
 
@@ -44,19 +46,19 @@ int solution(string word, vector<string> pages)
 
         left = html.find("<body>", right);
 
-        int matching = 0;
+        int mathcing = 0;
 
-        for (int start = left; ; )
+        for (int start = left; ;)
         {
             start = html.find(word, start + 1);
 
             if (start == string::npos)
                 break;
 
-            if (!isalpha(html[start - 1]) && !isalpha(html[start + size]))
+            if (!isalpha(html[start - 1]) && !isalpha(html[start + wsize]))
             {
-                matching++;
-                start += size;
+                mathcing++;
+                start += wsize;
             }
         }
 
@@ -68,12 +70,14 @@ int solution(string word, vector<string> pages)
 
             if (start == string::npos)
                 break;
+
             link++;
         }
 
         pageHash[url] = i;
-        v.push_back({ i, matching, link, (double)matching });
+        v.push_back({ i, mathcing, link, (double)mathcing });
     }
+
 
     for (int i = 0; i < pages.size(); i++)
     {
@@ -82,7 +86,7 @@ int solution(string word, vector<string> pages)
         for (int left = 0, right = 0; ;)
         {
             left = html.find("<a href", right);
-            
+
             if (left == string::npos)
                 break;
 
@@ -91,23 +95,23 @@ int solution(string word, vector<string> pages)
 
             string linkUrl = html.substr(left, right - left);
 
-            map<string, int>::iterator it = pageHash.find(linkUrl);
+            map<string, int>::const_iterator it = pageHash.find(linkUrl);
 
             if (it != pageHash.end())
-            {
                 v[it->second].score += (double)v[i].match / v[i].link;
-            }
         }
     }
 
+
     sort(v.begin(), v.end(), [](const sPage& a, const sPage& b) {
-        if (a.score == b.score)
-            return a.idx < b.idx;
-        else
+        if (a.score != b.score)
             return a.score > b.score;
+        else
+            return a.idx < b.idx;
     });
 
-    int answer = v.begin()->idx;
+    answer = v.begin()->idx;
+
     return answer;
 }
 
