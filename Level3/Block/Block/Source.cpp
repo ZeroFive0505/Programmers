@@ -44,7 +44,7 @@ struct sRobot
     bool IsValid()
     {
         return x >= 0 && y >= 0 && x2 >= 0 && y2 >= 0 &&
-            x < N&& y < N&& x2 < N&& y2 < N && !Board[y][x] && !Board[y2][x2];
+            x < N && y < N && x2 < N && y2 < N && !Board[y][x] && !Board[y2][x2];
     }
 
     bool IsFinished()
