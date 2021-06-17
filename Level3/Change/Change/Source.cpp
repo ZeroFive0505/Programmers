@@ -6,24 +6,23 @@ using namespace std;
 
 const int MOD = 1000000007;
 
-int cache[100001];
-
 int solution(int n, vector<int> money) 
 {
     int answer = 0;
+
+    vector<int> cache(n + 1);
+
     cache[0] = 1;
 
-    for (int i = money[0]; i <= n; i += money[0])
-        cache[i] = 1;
-
-    for (int i = 1; i < money.size(); i++)
+    for (int m : money)
     {
-        for (int j = 0; j <= n; j++)
+        for (int i = m; i <= n; i++)
         {
-            if (j >= money[i])
-                cache[j] += cache[j - money[i]] % MOD;
+            cache[i] += cache[i - m];
+            cache[i] %= MOD;
         }
     }
+
     answer = cache[n];
     return answer;
 }
