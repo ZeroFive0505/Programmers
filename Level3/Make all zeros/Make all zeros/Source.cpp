@@ -4,26 +4,24 @@
 
 using namespace std;
 
-void DFS(vector<vector<int>>& graph, vector<long long>& sum, int current, int parrent, long long& answer)
+void DFS(vector<vector<int>>& graph, int current, int parent, vector<long long>& sum, long long& answer)
 {
     for (int i = 0; i < graph[current].size(); i++)
     {
-        if (graph[current][i] != parrent)
-            DFS(graph, sum, graph[current][i], current, answer);
+        if (graph[current][i] != parent)
+        {
+            DFS(graph, graph[current][i], current, sum, answer);
+        }
     }
 
-    sum[parrent] += sum[current];
+    sum[parent] += sum[current];
     answer += abs(sum[current]);
 }
 
 long long solution(vector<int> a, vector<vector<int>> edges) 
 {
     long long answer = 0;
-
-    vector<long long> sum(a.size());
-
-    for (int i = 0; i < a.size(); i++)
-        sum[i] = a[i];
+    vector<long long> sum(a.begin(), a.end());
 
     vector<vector<int>> graph(a.size());
 
@@ -36,12 +34,15 @@ long long solution(vector<int> a, vector<vector<int>> edges)
         graph[v].push_back(u);
     }
 
-    DFS(graph, sum, 0, 0, answer);
+
+    DFS(graph, 0, 0, sum, answer);
 
     if (sum[0] == 0)
         return answer;
     else
         return -1;
+
+    return answer;
 }
 
 int main()

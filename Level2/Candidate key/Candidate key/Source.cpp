@@ -20,34 +20,32 @@ bool IsMinimum(vector<int>& candidates, int key)
 int solution(vector<vector<string>> relation)
 {
 	int answer = 0;
-	vector<int> candidates;
 	int rowSize = relation.size();
 	int colSize = relation[0].size();
+	vector<int> candidates;
+	int combinations = 1 << colSize;
 
-	int com = 1 << colSize;
-
-	for (int i = 1; i < com; i++)
+	for (int i = 1; i < combinations; i++)
 	{
 		set<string> s;
 		for (int j = 0; j < rowSize; j++)
 		{
-			unsigned int bit = 1;
+			unsigned int mask = 1;
 			string key;
-			for (int k = 0; k < colSize; k++, bit <<= 1)
+			for (int k = 0; k < colSize; k++, mask <<= 1)
 			{
-				if (i & bit)
+				if (i & mask)
+				{
 					key += relation[j][k];
+				}
 			}
-
 			s.insert(key);
 		}
 
-		if (s.size() == rowSize && IsMinimum(candidates, i))
+		if (IsMinimum(candidates, i) && s.size() == rowSize)
 			candidates.push_back(i);
 	}
-
 	answer = candidates.size();
-
 	return answer;
 }
 

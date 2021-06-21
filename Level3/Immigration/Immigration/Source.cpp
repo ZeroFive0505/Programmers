@@ -11,25 +11,24 @@ long long solution(int n, vector<int> times)
 
     sort(times.begin(), times.end());
 
-    long long maxTime = (long long)times.back() * n;
-    long long minTime = 0;
+    long long left = 0;
+    long long right = (long long)times.back() * n;
 
-    while (minTime <= maxTime)
+    while (left <= right)
     {
-        long long mid = (maxTime + minTime) / 2;
+        long long mid = (left + right) / 2;
 
         long long sum = 0;
-
         for (int i = 0; i < times.size(); i++)
             sum += mid / times[i];
 
         if (sum >= n)
         {
-            maxTime = mid - 1;
             answer = mid;
+            right = mid - 1;
         }
-        else if (sum < n)
-            minTime = mid + 1;
+        else
+            left = mid + 1;
     }
 
     return answer;

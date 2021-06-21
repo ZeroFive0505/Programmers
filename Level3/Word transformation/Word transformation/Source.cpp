@@ -25,33 +25,29 @@ int solution(string begin, string target, vector<string> words)
 {
     int answer = 0;
     queue<pair<string, int>> q;
-
+    vector<bool> visited(words.size(), false);
     q.push({ begin, 0 });
-
-    vector<bool> check(words.size(), false);
 
     while (!q.empty())
     {
-        pair<string, int> temp = q.front();
+        pair<string, int> f = q.front();
         q.pop();
-        string tf = temp.first;
-        int cnt = temp.second;
 
-        if (tf == target)
+        if (f.first == target)
         {
-            answer = cnt;
+            answer = f.second;
             break;
         }
 
         for (int i = 0; i < words.size(); i++)
         {
-            if (check[i])
+            if (visited[i])
                 continue;
 
-            if (CanTransform(tf, words[i]))
+            if (CanTransform(f.first, words[i]))
             {
-                check[i] = true;
-                q.push({ words[i], cnt + 1 });
+                q.push({ words[i], f.second + 1 });
+                visited[i] = true;
             }
         }
     }
@@ -64,12 +60,7 @@ int main()
     string b = "hit";
     string t = "cog";
     vector<string> words = {
-        "hot",
-        "dot",
-        "dog",
-        "lot",
-        "log",
-        "cog"
+        "hot", "dot", "dog", "lot", "log"
     };
 
     cout << solution(b, t, words) << "\n";

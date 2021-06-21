@@ -25,7 +25,7 @@ vector<int> solution(int n, long long k)
         current = k / Factorial[n - 1];
         answer.push_back(number[current]);
         number.erase(number.begin() + current);
-        k %= Factorial[n - 1];
+        k = k % Factorial[n - 1];
         n--;
     }
 

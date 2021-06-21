@@ -9,8 +9,7 @@ const int MOD = 1000000007;
 int solution(int n, vector<int> money) 
 {
     int answer = 0;
-
-    vector<int> cache(n + 1);
+    vector<int> cache(n + 1, 0);
 
     cache[0] = 1;
 
@@ -22,7 +21,6 @@ int solution(int n, vector<int> money)
             cache[i] %= MOD;
         }
     }
-
     answer = cache[n];
     return answer;
 }
