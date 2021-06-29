@@ -5,15 +5,15 @@
 
 using namespace std;
 
-bool CanCross(vector<int>& stones, int mid, int k)
+bool CanAcross(vector<int>& stones, int jump, int k)
 {
     int cnt = 0;
     for (int i = 0; i < stones.size(); i++)
     {
-        if (stones[i] < mid)
+        if (stones[i] - jump < 0)
         {
             cnt++;
-            if (cnt >= k)
+            if (cnt == k)
                 return false;
         }
         else
@@ -29,22 +29,21 @@ int solution(vector<int> stones, int k)
 
     int left = 1;
     int right = *max_element(stones.begin(), stones.end());
-    int mid;
 
+    
     while (left <= right)
     {
-        mid = (left + right) / 2;
+        int mid = (left + right) / 2;
 
-        if (CanCross(stones, mid, k))
+        if (CanAcross(stones, mid, k))
         {
+            answer = max(answer, mid);
             left = mid + 1;
-            if (answer < mid)
-                answer = mid;
         }
         else
             right = mid - 1;
     }
-
+  
     return answer;
 }
 
