@@ -10,6 +10,8 @@ const int SIZE = 301;
 int visited[SIZE][SIZE];
 int parent[SIZE * SIZE];
 int numSize[SIZE * SIZE];
+
+
 struct sDelta
 {
     int x;
@@ -21,13 +23,57 @@ struct sDelta
     {0, 1}
 };
 
-struct CompFunctor
+struct sNode
 {
-    bool operator()(const pair<int, pair<int, int>>& a, const pair<int, pair<int, int>>& b)
+    int u;
+    int v;
+    int weight;
+
+    sNode(int u, int v, int weight) : u(u), v(v), weight(weight) {}
+
+    bool operator<(const sNode& rhs) const
     {
-        return a.first > b.first;
+        return this->weight < rhs.weight;
+    }
+
+    bool operator>(const sNode& rhs) const
+    {
+        return this->weight > rhs.weight;
     }
 };
+
+void BFS(int y, int x, vector<vector<int>>& land, int height, int areaNum)
+{
+    queue<pair<int, int>> q;
+
+    visited[y][x] = areaNum;
+
+    q.push({ y, x });
+
+    while (!q.empty())
+    {
+        pair<int, int> current = q.front();
+        q.pop();
+
+        int y = current.first;
+        int x = current.second;
+
+        for (int i = 0; i < 4; i++)
+        {
+            int ny = y + Delta[i].y;
+            int nx = x + Delta[i].x;
+
+            if (ny < 0 || nx < 0 || ny >= land.size() || nx >= land[0].size())
+                continue;
+
+            if (visited[ny][nx] == 0 && abs(land[y][x] - land[ny][nx]) <= height)
+            {
+                visited[ny][nx] = areaNum;
+                q.push({ ny, nx });
+            }
+        }
+    }
+}
 
 int GetParent(int v)
 {
@@ -50,101 +96,77 @@ void SetUnion(int u, int v)
     }
 }
 
-
-void BFS(vector<vector<int>>& land, int y, int x, int areaNum, int height)
-{
-    queue<pair<int, int>> q;
-
-    q.push({ y, x });
-    visited[y][x] = areaNum;
-
-    while (!q.empty())
-    {
-        pair<int, int> f = q.front();
-        q.pop();
-
-        for (int i = 0; i < 4; i++)
-        {
-            int y = f.first;
-            int x = f.second;
-            int ny = y+ Delta[i].y;
-            int nx = x + Delta[i].x;
-
-            if (ny < 0 || nx < 0 || ny >= land.size() || nx >= land[0].size())
-                continue;
-
-            if (visited[ny][nx] == 0 && abs(land[y][x] - land[ny][nx]) <= height)
-            {
-                visited[ny][nx] = areaNum;
-                q.push({ ny, nx });
-            }
-        }
-    }
-}
-
 int solution(vector<vector<int>> land, int height) 
 {
     int answer = 0;
+
     int areaNum = 1;
-    priority_queue<pair<int, pair<int, int>>, vector<pair<int, pair<int, int>>>, CompFunctor> pq;
+
+    fill(parent, parent + (SIZE * SIZE), -1);
+    fill(numSize, numSize + (SIZE * SIZE), 0);
+
+
     for (int i = 0; i < land.size(); i++)
     {
-        for (int j = 0; j < land[i].size(); j++)
+        for (int j = 0; j < land[0].size(); j++)
         {
             if (visited[i][j] == 0)
             {
-                BFS(land, i, j, areaNum, height);
+                BFS(i, j, land, height, areaNum);
                 areaNum++;
             }
         }
     }
 
+
+    priority_queue<sNode, vector<sNode>, greater<sNode>> pq;
+
+
     for (int y = 0; y < land.size(); y++)
     {
-        for (int x = 0; x < land[y].size(); x++)
+        for (int x = 0; x < land[0].size(); x++)
         {
             for (int dir = 0; dir < 4; dir++)
             {
-                int nx = x + Delta[dir].x;
                 int ny = y + Delta[dir].y;
+                int nx = x + Delta[dir].x;
 
-                if (nx < 0 || ny < 0 || nx >= land[0].size() || ny >= land.size())
+                if (ny < 0 || nx < 0 || ny >= land.size() || nx >= land[0].size())
                     continue;
 
-                if (visited[ny][nx] != visited[y][x])
+                if (visited[y][x] != visited[ny][nx])
                 {
-                    pq.push(make_pair(abs(land[ny][nx] - land[y][x]), make_pair(visited[ny][nx], visited[y][x])));
+                    pq.push(sNode(visited[y][x], visited[ny][nx], abs(land[y][x] - land[ny][nx])));
                 }
             }
         }
     }
 
-    
+
     areaNum--;
 
-    fill(parent, parent + SIZE * SIZE, -1);
-    fill(numSize, numSize + SIZE * SIZE, 1);
+    int edgeAccepted = 0;
 
-    for (int i = 0; i < areaNum - 1;)
+    while (edgeAccepted < areaNum - 1)
     {
-        pair<int, pair<int, int>> t = pq.top();
+        sNode top = pq.top();
         pq.pop();
 
-        int u = t.second.first;
-        int v = t.second.second;
+        int u = top.u;
+        int v = top.v;
+        int w = top.weight;
 
         int uParent = GetParent(u);
         int vParent = GetParent(v);
 
         if (uParent != vParent)
         {
-            answer += t.first;
+            answer += w;
             SetUnion(uParent, vParent);
-            i++;
+            edgeAccepted++;
         }
     }
     
-
 
     return answer;
 }

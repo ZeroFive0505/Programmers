@@ -38,7 +38,7 @@ int solution(vector<int> sticker)
 
 int main()
 {
-    vector<int> stickers = { 1, 3, 2, 5, 4 };
+    vector<int> stickers = { 14, 6, 5, 11, 3, 9, 2, 10 };
 
     cout << solution(stickers) << "\n";
 

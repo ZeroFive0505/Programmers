@@ -21,7 +21,7 @@ int solution(int n, vector<int> money)
             cache[i] %= MOD;
         }
     }
-    answer = cache[n];
+
     return answer;
 }
 

@@ -13,7 +13,9 @@ long long solution(int n)
     cache[2] = 2;
 
     for (int i = 3; i <= n; i++)
-        cache[i] = (cache[i - 1] + cache[i - 2]) % MOD;
+    {
+        cache[i] = (cache[i - 2] + cache[i - 1]) % MOD;
+    }
 
     answer = cache[n];
     return answer;
@@ -21,7 +23,7 @@ long long solution(int n)
 
 int main()
 {
-    int n = 3;
+    int n = 4;
     cout << solution(n) << "\n";
     return 0;
 }
