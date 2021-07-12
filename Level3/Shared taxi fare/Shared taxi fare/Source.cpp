@@ -1,7 +1,6 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <queue>
 #include <algorithm>
 
 using namespace std;
@@ -11,18 +10,21 @@ const int INF = 987654321;
 int solution(int n, int s, int a, int b, vector<vector<int>> fares) 
 {
     int answer = 0;
+
     vector<vector<int>> dists(n + 1, vector<int>(n + 1, INF));
 
     for (int i = 0; i < fares.size(); i++)
     {
         int u = fares[i][0];
         int v = fares[i][1];
-        int c = fares[i][2];
+        int w = fares[i][2];
 
-        dists[u][v] = c;
-        dists[v][u] = c;
+        dists[u][v] = w;
+        dists[v][u] = w;
     }
 
+    for (int i = 0; i <= n; i++)
+        dists[i][i] = 0;
 
     for (int k = 1; k <= n; k++)
     {
@@ -35,9 +37,6 @@ int solution(int n, int s, int a, int b, vector<vector<int>> fares)
             }
         }
     }
-
-    for (int i = 1; i <= n; i++)
-        dists[i][i] = 0;
 
 
     answer = dists[s][a] + dists[s][b];

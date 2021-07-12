@@ -24,109 +24,113 @@ struct sDelta
 
 struct sRobot
 {
-    int x;
-    int y;
+    int x1;
+    int y1;
     int x2;
     int y2;
 
-    sRobot(int x, int y, int x2, int y2) : x(x), y(y), x2(x2), y2(y2) {}
-
-    bool IsValid()
+    sRobot(int x1, int y1, int x2, int y2) : x1(x1), y1(y1), x2(x2), y2(y2)
     {
-        if (x < 0 || x2 < 0 || y < 0 || y2 < 0 || x >= N || x2 >= N || y >= N || y2 >= N)
-            return false;
-        
-        if (Board[y][x] || Board[y2][x2])
-            return false;
 
-        return true;
+    }
+
+    bool IsValid() const
+    {
+        if (x1 >= 0 && x1 < N && y1 >= 0 && y1 < N && x2 >= 0 && x2 < N && y2 >= 0 && y2 < N && !Board[y1][x1] && !Board[y2][x2])
+            return true;
+        else
+            return false;
+    }
+
+    bool IsFinished() const
+    {
+        if (x1 == N - 1 && y1 == N - 1 || x2 == N - 1 && y2 == N - 1)
+            return true;
+        else
+            return false;
     }
 
     sRobot Move(int d)
     {
-        return sRobot(x + Delta[d].x, y + Delta[d].y, x2 + Delta[d].x, y2 + Delta[d].y);
+        return sRobot(x1 + Delta[d].x, y1 + Delta[d].y, x2 + Delta[d].x, y2 + Delta[d].y);
     }
 
     pair<sRobot, sRobot> Rotate(int d)
     {
-        return make_pair(sRobot(x, y, x + Delta[d].x, y + Delta[d].y), sRobot(x2, y2, x2 + Delta[d].x, y2 + Delta[d].y));
-    }
-
-    bool IsFinished()
-    {
-        return x == N - 1 && y == N - 1 || x2 == N - 1 && y2 == N - 1;
+        return make_pair(sRobot(x1, y1, x1 + Delta[d].x, y1 + Delta[d].y), sRobot(x2, y2, x2 + Delta[d].x, y2 + Delta[d].y));
     }
 
     bool operator==(const sRobot& rhs) const
     {
-        return tie(x, y, x2, y2) == tie(rhs.x, rhs.y, rhs.x2, rhs.y2) ||
-            tie(x, y, x2, y2) == tie(rhs.x2, rhs.y2, rhs.x, rhs.y);
+        return tie(x1, y1, x2, y2) == tie(rhs.x1, rhs.y1, rhs.x2, rhs.y2) ||
+            tie(x1, y1, x2, y2) == tie(rhs.x2, rhs.y2, rhs.x1, rhs.y1);
     }
 
     bool operator<(const sRobot& rhs) const
     {
-        return tie(x, y, x2, y2) < tie(rhs.x, rhs.y, rhs.x2, rhs.y2);
+        return tie(x1, y1, x2, y2) < tie(rhs.x1, rhs.y1, rhs.x2, rhs.y2);
     }
 };
 
-map<sRobot, int> Dist;
+map<sRobot, int> hashMap;
 
-vector<sRobot> GetMoved(sRobot& r)
+vector<sRobot> GetMoved(sRobot& current)
 {
-    vector<sRobot> moved;
+    vector<sRobot> ret;
 
     for (int i = 0; i < 4; i++)
     {
-        moved.push_back(r.Move(i));
+        if (current.Move(i).IsValid())
+            ret.push_back(current.Move(i));
     }
 
-    return moved;
+    return ret;
 }
 
-
-vector<sRobot> GetRotated(sRobot& r)
+vector<sRobot> GetRotated(sRobot& current)
 {
-    vector<sRobot> rotated;
+    vector<sRobot> ret;
 
     for (int i = 0; i < 4; i++)
     {
-        if (r.Move(i).IsValid())
+        if (current.Move(i).IsValid())
         {
-            pair<sRobot, sRobot> rot = r.Rotate(i);
-            rotated.push_back(rot.first);
-            rotated.push_back(rot.second);
+            pair<sRobot, sRobot> temp = current.Rotate(i);
+            ret.push_back(temp.first);
+            ret.push_back(temp.second);
         }
     }
 
-    return rotated;
+    return ret;
 }
 
-int BFS(sRobot r)
+int BFS(sRobot robot)
 {
-    Dist[r] = 0;
-
+    hashMap[robot] = 0;
     queue<sRobot> q;
-    q.push(r);
+
+    q.push(robot);
 
     while (!q.empty())
     {
         sRobot cur = q.front();
         q.pop();
-        int curDist = Dist[cur];
+
+        int curDist = hashMap[cur];
 
         if (cur.IsFinished())
             return curDist;
 
-        vector<sRobot> movement[2] = { GetMoved(cur), GetRotated(cur) };
+        vector<sRobot> next[2] = { GetMoved(cur), GetRotated(cur) };
 
         for (int i = 0; i < 2; i++)
         {
-            for (auto it : movement[i])
+            for (sRobot& r: next[i])
             {
-                if (Dist.find(it) == Dist.end() && it.IsValid())
+                if (hashMap.find(r) == hashMap.end() && r.IsValid())
                 {
-                    q.push(it);
-                    Dist[it] = curDist + 1;
+                    hashMap[r] = curDist + 1;
+                    q.push(r);
                 }
             }
         }
