@@ -7,23 +7,128 @@
 
 using namespace std;
 
+struct DNode
+{
+    int data;
+    DNode* left;
+    DNode* right;
+
+    DNode(int data, DNode* left, DNode* right) : data(data), left(left), right(right) {}
+};
+
+struct DList
+{
+    DNode* dummy;
+    DNode* head;
+    DNode* tail;
+
+    void Init()
+    {
+        dummy = new DNode(0, nullptr, nullptr);
+        head = nullptr;
+        tail = nullptr;
+    }
+
+    void PushFront(const int data)
+    {
+        if (head == nullptr)
+        {
+            head = new DNode(data, nullptr, nullptr);
+            tail = head;
+            head->left = dummy;
+            head->right = dummy;
+            dummy->right = head;
+            dummy->left = tail;
+        }
+        else
+        {
+            DNode* temp = new DNode(data, nullptr, nullptr);
+            dummy->right->left = temp;
+            dummy->right = temp;
+            temp->left = dummy;
+            temp->right = head;
+            head = temp;
+        }
+    }
+
+    void PushAt(DNode* at, DNode* restore)
+    {
+        restore->left = at;
+        restore->right = at->right;
+        at->right->left = restore;
+        at->right = restore;
+    }
+
+    DNode* RemoveAt(DNode* at)
+    {
+        at->left->right = at->right;
+        at->right->left = at->left;
+
+        return at;
+    }
+
+    void PushBack(const int data)
+    {
+        if (tail == nullptr)
+        {
+            tail = new DNode(data, nullptr, nullptr);
+            head = tail;
+            tail->left = dummy;
+            tail->right = dummy;
+            dummy->left = tail;
+            dummy->right = tail;
+        }
+        else
+        {
+            DNode* temp = new DNode(data, nullptr, nullptr);
+            tail->right->left = temp;
+            temp->left = tail;
+            temp->right = dummy;
+            tail->right = temp;
+            tail = temp;
+        }
+    }
+
+    void PrintForward() const
+    {
+        DNode* cur;
+
+        for (cur = dummy->right; cur != dummy; cur = cur->right)
+        {
+            cout << cur->data << " ";
+        }
+        cout << "\n";
+    }
+
+    void PrintBackward() const
+    {
+        DNode* cur;
+        for (cur = dummy->left; cur != dummy; cur = cur->left)
+        {
+            cout << cur->data << " ";
+        }
+        cout << "\n";
+    }
+};
+
 
 string solution(int n, int k, vector<string> cmd)
 {
     string answer;
     for (int i = 0; i < n; i++)
         answer.push_back('X');
-    list<int> rows;
-    stack<pair<int, int>> rewind;
+    DList rows;
+    rows.Init();
+    stack<pair<DNode*, DNode*>> rewind;
 
     for (int i = 0; i < n; i++)
-        rows.push_back(i);
+        rows.PushBack(i);
 
-    list<int>::iterator it = rows.begin();
-    list<int>::iterator temp;
+    DNode* it = rows.dummy->right;
+    DNode* temp;
 
     for (int i = 0; i < k; i++)
-        it++;
+        it = it->right;
 
     for (int i = 0; i < cmd.size(); i++)
     {
@@ -34,37 +139,17 @@ string solution(int n, int k, vector<string> cmd)
             switch (order[0])
             {
             case 'C':
+                rewind.push({ it->left, it });
                 temp = it;
-                if (*it != 0)
-                {
-                    temp--;
-                    rewind.push({ *temp, *it });
-                    temp++;
-                }
-                else if (*it == 0)
-                    rewind.push({ -1, 0 });
-
-                it++;
-                if (it == rows.end())
-                {
-                    for (int j = 0; j < 2; j++)
-                        it--;
-                }
-                rows.erase(temp);
+                it = it->right;
+                rows.RemoveAt(temp);
+                if (it == rows.dummy)
+                    it = it->left;
                 break;
             case 'Z':
-                pair<int, int> t = rewind.top();
+                pair<DNode*, DNode*> t = rewind.top();
                 rewind.pop();
-                temp = rows.begin();
-                if (t.first != -1)
-                {
-                    while (*temp != t.first)
-                        temp++;
-                    temp++;
-                    rows.insert(temp, t.second);
-                }
-                else if (t.first == -1)
-                    rows.insert(temp, t.second);
+                rows.PushAt(t.first, t.second);
                 break;
             }
         }
@@ -86,31 +171,44 @@ string solution(int n, int k, vector<string> cmd)
             {
             case 'U':
                 for (int j = 0; j < num; j++)
-                    it--;
+                    it = it->left;
                 break;
             case 'D':
                 for (int j = 0; j < num; j++)
-                    it++;
+                    it = it->right;
                 break;
             }
         }
     }
 
-    for (it = rows.begin(); it != rows.end(); it++)
-        answer[*it] = 'O';
+    for (it = rows.dummy->right; it != rows.dummy; it = it->right)
+        answer[it->data] = 'O';
 
     return answer;
 }
 
 int main()
 {
-    int n = 8;
+  /*  int n = 8;
     int k = 2;
     vector<string> cmd = {
        "D 2","C","U 3","C","D 4","C","U 2","Z","Z","U 1","C"
     };
 
-    cout << solution(n, k, cmd) << "\n";
+    cout << solution(n, k, cmd) << "\n";*/
+
+    DList dlist;
+
+    dlist.Init();
+
+    for (int i = 10; i <= 20; i++)
+        dlist.PushBack(i);
+
+    for (int i = 1; i < 10; i++)
+        dlist.PushFront(i);
+
+    dlist.PrintForward();
+    dlist.PrintBackward();
 
     return 0;
 }
