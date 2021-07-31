@@ -1,5 +1,4 @@
 #include <iostream>
-#include <string>
 #include <vector>
 #include <cstring>
 
@@ -15,19 +14,14 @@ int DP(int m, int n)
 {
     if (m == 0 || n == 0)
         return 0;
-    
-    int& ret = cache[m][n];
-
-
-    if(ret == 0)
-        return 0;
-
-    if (ret != -1)
-        return ret;
 
     if (m == 1 && n == 1)
         return 1;
 
+    int& ret = cache[m][n];
+
+    if (ret != -1)
+        return ret;
 
     return ret = (DP(m - 1, n) + DP(m, n - 1)) % DIV;
 }

@@ -5,19 +5,19 @@
 
 using namespace std;
 
-bool CanAcross(vector<int>& stones, int jump, int k)
+bool CanAcross(const vector<int>& stones, const int mid, const int k)
 {
     int cnt = 0;
+
     for (int i = 0; i < stones.size(); i++)
     {
-        if (stones[i] - jump < 0)
-        {
+        if (stones[i] - mid < 0)
             cnt++;
-            if (cnt == k)
-                return false;
-        }
         else
             cnt = 0;
+
+        if (cnt >= k)
+            return false;
     }
 
     return true;
@@ -30,7 +30,6 @@ int solution(vector<int> stones, int k)
     int left = 1;
     int right = *max_element(stones.begin(), stones.end());
 
-    
     while (left <= right)
     {
         int mid = (left + right) / 2;
@@ -43,7 +42,7 @@ int solution(vector<int> stones, int k)
         else
             right = mid - 1;
     }
-  
+
     return answer;
 }
 

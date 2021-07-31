@@ -13,7 +13,7 @@ struct sDelta
     int c;
 } Delta[] = { {-1, 0}, {0, 1}, {1, 0}, {0, -1} };
 
-struct Pos
+struct sPos
 {
     int r;
     int c;
@@ -26,67 +26,61 @@ const int INF = 987654321;
 
 vector<string> B;
 
-map<char, Pos> hashMap;
+map<char, sPos> hashMap;
 
-Pos BFS(Pos v, char ch)
+sPos BFS(sPos src, char ch)
 {
-    vector<vector<int>> turnCnts(M, vector<int>(N, INF));
+    vector<vector<int>> turns(M, vector<int>(N, INF));
 
-    v.dir = -1;
-    queue<Pos> q;
-    q.push(v);
-    turnCnts[v.r][v.c] = 0;
+    turns[src.r][src.c] = 0;
+
+    src.dir = -1;
+
+    queue<sPos> q;
+
+    q.push(src);
 
     bool not_first = false;
 
-    auto check = [&](const int r, const int c) {
-        if (r >= M || c >= N)
-            return true;
-        else if (r < 0 || c < 0)
-            return true;
-        else
-            return false;
-    };
-
     while (!q.empty())
     {
-        Pos current = q.front();
+        sPos cur = q.front();
         q.pop();
 
-        if (not_first && B[current.r][current.c] == ch)
-            return { current.r, current.c };
+        if (not_first && B[cur.r][cur.c] == ch)
+            return cur;
 
         not_first = true;
 
         for (int i = 0; i < 4; i++)
         {
-            int nextR = current.r + Delta[i].r;
-            int nextC = current.c + Delta[i].c;
+            int nr = cur.r + Delta[i].r;
+            int nc = cur.c + Delta[i].c;
 
             int nextDir = i;
 
-            int turn = turnCnts[current.r][current.c];
+            int nextTurn = turns[cur.r][cur.c];
 
-            if (current.dir != -1 && current.dir != nextDir)
-                turn++;
+            if (cur.dir != -1 && cur.dir != nextDir)
+                nextTurn++;
 
-            if (check(nextR, nextC))
+            if (nr < 0 || nr >= M || nc < 0 || nc >= N)
                 continue;
 
-            if (turn >= 2)
+            if (nextTurn >= 2)
                 continue;
 
-            if (B[nextR][nextC] != '.' && B[nextR][nextC] != ch)
+            if (B[nr][nc] != '.' && B[nr][nc] != ch)
                 continue;
 
-            if (turnCnts[nextR][nextC] >= turn)
+            if (turns[nr][nc] >= nextTurn)
             {
-                q.push({ nextR, nextC, nextDir });
-                turnCnts[nextR][nextC] = turn;
+                q.push({ nr, nc, nextDir });
+                turns[nr][nc] = nextTurn;
             }
         }
-        
     }
+    
 
     return { -1, -1 };
 }
@@ -99,39 +93,40 @@ string solution(int m, int n, vector<string> board)
     N = n;
     B = board;
 
-    for (int i = 0; i < m; i++)
+
+    for (int i = 0; i < board.size(); i++)
     {
-        for (int j = 0; j < n; j++)
+        for (int j = 0; j < board[i].size(); j++)
         {
-            if (isalpha(board[i][j]))
-                hashMap[board[i][j]] = { i, j };
+            if (isalpha(B[i][j]))
+            {
+                hashMap[B[i][j]] = { i, j };
+            }
         }
     }
 
+
     while (1)
     {
-        bool removal = false;
-
-
-        for (const auto& kv : hashMap)
+        bool canRemove = false;
+        for (const auto& iter : hashMap)
         {
-            char ch = kv.first;
-            Pos start = kv.second;
-
-            Pos dest = BFS(start, ch);
+            char ch = iter.first;
+            sPos src = iter.second;
+            sPos dest = BFS(src, ch);
 
             if (dest.r != -1 && dest.c != -1)
             {
+                B[src.r][src.c] = '.';
                 B[dest.r][dest.c] = '.';
-                B[start.r][start.c] = '.';
-                hashMap.erase(ch);
-                answer.push_back(ch);
-                removal = true;
+                hashMap.erase(iter.first);
+                answer += ch;
+                canRemove = true;
                 break;
             }
         }
 
-        if (removal)
+        if (canRemove)
             continue;
 
         if (hashMap.empty())
@@ -139,8 +134,6 @@ string solution(int m, int n, vector<string> board)
         else
             return "IMPOSSIBLE";
     }
-
-    return answer;
 }
 
 int main()

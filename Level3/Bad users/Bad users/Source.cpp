@@ -34,12 +34,11 @@ void DFS(vector<string>& user_id, vector<string>& banned_id, int idx, int num)
 			if (banned_id[idx][j] == '*')
 				continue;
 
-			if (user_id[i][j] != banned_id[idx][j])
+			if (banned_id[idx][j] != user_id[i][j])
 				break;
 		}
 
-
-		if (j == user_id[i].size())
+		if (j == banned_id[idx].size())
 		{
 			check[i] = true;
 			DFS(user_id, banned_id, idx + 1, num | (1 << i));

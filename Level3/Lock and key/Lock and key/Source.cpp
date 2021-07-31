@@ -23,8 +23,6 @@ void RotateMat(vector<vector<int>>& key)
 
 bool solution(vector<vector<int>> key, vector<vector<int>> lock) 
 {
-    bool answer = false;
-
     int keySize = key.size();
     int lockSize = lock.size();
 
@@ -36,7 +34,7 @@ bool solution(vector<vector<int>> key, vector<vector<int>> lock)
         {
             for (int j = 0; j < lockSize + keySize - 1; j++)
             {
-                vector<vector<int>> padding(lockSize + 2 * keySize - 2, vector<int>(lockSize + 2 * keySize - 2, 0));
+                vector<vector<int>> padding(lockSize + (keySize - 1) * 2, vector<int>(lockSize + (keySize - 1) * 2, 0));
 
                 for (int y = 0; y < lockSize; y++)
                 {
@@ -50,15 +48,15 @@ bool solution(vector<vector<int>> key, vector<vector<int>> lock)
                 {
                     for (int x = 0; x < keySize; x++)
                     {
-                        padding[y + i][x + j] ^= key[y][x];
+                        padding[i + y][j + x] ^= key[y][x];
                     }
                 }
 
                 int cnt = 0;
 
-                for (int y = keySize - 1; y < keySize + lockSize - 1; y++)
+                for (int y = keySize - 1; y < lockSize + keySize - 1; y++)
                 {
-                    for (int x = keySize - 1; x < keySize + lockSize - 1; x++)
+                    for (int x = keySize - 1; x < lockSize + keySize - 1; x++)
                     {
                         if (padding[y][x])
                             cnt++;
@@ -67,12 +65,11 @@ bool solution(vector<vector<int>> key, vector<vector<int>> lock)
 
                 if (cnt == lockSize * lockSize)
                     return true;
-
             }
         }
     }
   
-    return answer;
+    return false;
 }
 
 int main()

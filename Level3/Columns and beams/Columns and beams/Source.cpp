@@ -11,33 +11,43 @@ const int BEAM = 1;
 
 int BUILD[SIZE][SIZE][2];
 
-bool CheckBoundary(int y, int x, int n)
+bool CheckBoundary(const int x, const int y, const int n)
 {
-    return (y >= 0 && x >= 0 && y <= n && x <= n);
+    if (y >= 0 && x >= 0 && x <= n && y <= n)
+        return true;
+    else
+        return false;
 }
 
-bool ColCheck(int y, int x, int n)
+bool BeamCheck(const int x, const int y, const int n)
 {
-    if (y == 0)
+    if (CheckBoundary(x - 1, y, n) && BUILD[y][x - 1][BEAM] && 
+        CheckBoundary(x + 1, y, n) && BUILD[y][x + 1][BEAM])
         return true;
+
     if (CheckBoundary(y - 1, x, n) && BUILD[y - 1][x][COLUMN])
         return true;
-    if (CheckBoundary(y, x - 1, n) && BUILD[y][x - 1][BEAM])
+
+    if (CheckBoundary(y - 1, x + 1, n) && BUILD[y - 1][x + 1][COLUMN])
         return true;
-    if (CheckBoundary(y, x, n) && BUILD[y][x][BEAM])
-        return true;
+
     return false;
 }
 
-bool BeamCheck(int y, int x, int n)
+bool ColCheck(const int x, const int y, const int n)
 {
-    if ((CheckBoundary(y, x - 1, n) && BUILD[y][x - 1][BEAM]
-        && CheckBoundary(y, x + 1, n) && BUILD[y][x + 1][BEAM]))
+    if (y == 0)
         return true;
-    if (CheckBoundary(y - 1, x, n) && BUILD[y - 1][x][COLUMN])
+
+    if (CheckBoundary(x, y - 1, n) && BUILD[y - 1][x][COLUMN])
         return true;
-    if (CheckBoundary(y - 1, x + 1, n) && BUILD[y - 1][x + 1][COLUMN])
+
+    if (CheckBoundary(x - 1, y, n) && BUILD[y][x - 1][BEAM])
         return true;
+
+    if (CheckBoundary(x, y, n) && BUILD[y][x][BEAM])
+        return true;
+
     return false;
 }
 
@@ -52,11 +62,50 @@ vector<vector<int>> solution(int n, vector<vector<int>> build_frame)
         int a = build_frame[i][2];
         int b = build_frame[i][3];
 
-        if (a == 1) // Beam
+        if (a == 0) // Column
         {
             if (b == 1)
             {
-                if (BeamCheck(y, x, n))
+                if (ColCheck(x, y, n))
+                    BUILD[y][x][COLUMN] = 1;
+            }
+            else
+            {
+                BUILD[y][x][COLUMN] = 0;
+
+                if (BUILD[y + 1][x][COLUMN] == 1)
+                {
+                    if (!ColCheck(x, y + 1, n))
+                    {
+                        BUILD[y][x][COLUMN] = 1;
+                        continue;
+                    }
+                }
+
+                if (BUILD[y + 1][x][BEAM] == 1)
+                {
+                    if (!BeamCheck(x, y + 1, n))
+                    {
+                        BUILD[y][x][COLUMN] = 1;
+                        continue;
+                    }
+                }
+
+                if (BUILD[y + 1][x - 1][BEAM] == 1)
+                {
+                    if (!BeamCheck(x - 1, y + 1, n))
+                    {
+                        BUILD[y][x][COLUMN] = 1;
+                        continue;
+                    }
+                }
+            }
+        }
+        else // Beam
+        {
+            if (b == 1)
+            {
+                if (BeamCheck(x, y, n))
                     BUILD[y][x][BEAM] = 1;
             }
             else
@@ -65,7 +114,7 @@ vector<vector<int>> solution(int n, vector<vector<int>> build_frame)
 
                 if (BUILD[y][x - 1][BEAM] == 1)
                 {
-                    if (!BeamCheck(y, x - 1, n))
+                    if (!BeamCheck(x - 1, y, n))
                     {
                         BUILD[y][x][BEAM] = 1;
                         continue;
@@ -74,7 +123,7 @@ vector<vector<int>> solution(int n, vector<vector<int>> build_frame)
 
                 if (BUILD[y][x + 1][BEAM] == 1)
                 {
-                    if (!BeamCheck(y, x + 1, n))
+                    if (!BeamCheck(x + 1, y, n))
                     {
                         BUILD[y][x][BEAM] = 1;
                         continue;
@@ -83,59 +132,18 @@ vector<vector<int>> solution(int n, vector<vector<int>> build_frame)
 
                 if (BUILD[y][x][COLUMN] == 1)
                 {
-                    if (!ColCheck(y, x, n))
+                    if (!ColCheck(x, y, n))
                     {
                         BUILD[y][x][BEAM] = 1;
                         continue;
                     }
                 }
-
 
                 if (BUILD[y][x + 1][COLUMN] == 1)
                 {
-                    if (!ColCheck(y, x + 1, n))
+                    if (!ColCheck(x + 1, y, n))
                     {
                         BUILD[y][x][BEAM] = 1;
-                        continue;
-                    }
-                }
-            }
-        }
-        else // Column
-        {
-            if (b == 1)
-            {
-                if (ColCheck(y, x, n))
-                    BUILD[y][x][COLUMN] = 1;
-            }
-            else
-            {
-                BUILD[y][x][COLUMN] = 0;
-
-                if (BUILD[y + 1][x][COLUMN])
-                {
-                    if (!ColCheck(y + 1, x, n))
-                    {
-                        BUILD[y][x][COLUMN] = 1;
-                        continue;
-                    }
-                }
-
-
-                if (BUILD[y + 1][x][BEAM])
-                {
-                    if (!BeamCheck(y + 1, x, n))
-                    {
-                        BUILD[y][x][COLUMN] = 1;
-                        continue;
-                    }
-                }
-
-                if (BUILD[y + 1][x - 1][BEAM])
-                {
-                    if (!BeamCheck(y + 1, x - 1, n))
-                    {
-                        BUILD[y][x][COLUMN] = 1;
                         continue;
                     }
                 }
@@ -154,6 +162,7 @@ vector<vector<int>> solution(int n, vector<vector<int>> build_frame)
                 answer.push_back({ i, j, BEAM });
         }
     }
+
 
     return answer;
 }

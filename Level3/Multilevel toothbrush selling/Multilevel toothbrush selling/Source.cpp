@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <unordered_map>
+#include <map>
 
 using namespace std;
 
@@ -10,9 +10,8 @@ const int PROFIT = 100;
 vector<int> solution(vector<string> enroll, vector<string> referral, vector<string> seller, vector<int> amount) 
 {
     vector<int> answer;
-    unordered_map<string, string> hashRef;
-    unordered_map<string, int> hashProfit;
-   
+    map<string, string> hashRef;
+    map<string, int> hashProfit;
 
     for (int i = 0; i < enroll.size(); i++)
     {
@@ -21,46 +20,39 @@ vector<int> solution(vector<string> enroll, vector<string> referral, vector<stri
     }
 
 
+
     for (int i = 0; i < seller.size(); i++)
     {
         string name = seller[i];
-        int amt = amount[i];
+        int profit = amount[i] * PROFIT;
+        hashProfit[name] += profit;
+        string ref = hashRef[name];
 
-        int money = PROFIT * amt;
+        while (1)
+        {
+            double percent = (int)(profit * 0.1f);
 
-        hashProfit[name] += money;
+            if (percent <= 0.0f)
+                break;
 
-      
-            string ref = hashRef[name];
-            while (1)
+            if (ref == "-")
             {
-                double p = (int)(money * 0.1);
-
-                if (p <= 0.0f)
-                    break;
-
-                if (ref == "-")
-                {
-                    if (p >= 1)
-                        hashProfit[name] -= (int)p;
-
-                    break;
-                }
-
-                if (p >= 1)
-                {
-                    hashProfit[name] -= (int)p;
-                    hashProfit[ref] += (int)p;
-                }
-
-                money = p;
-                name = ref;
-                ref = hashRef[name];
+                if(percent >= 1.0)
+                    hashProfit[name] -= (int)percent;
+                break;
             }
-        
+			else if (percent >= 1.0)
+			{
+				hashProfit[name] -= (int)percent;
+				hashProfit[ref] += (int)percent;
+			}
+   
+            name = ref;
+            ref = hashRef[name];
+            profit = percent;
+        }
     }
 
-    
     for (int i = 0; i < enroll.size(); i++)
         answer.push_back(hashProfit[enroll[i]]);
 

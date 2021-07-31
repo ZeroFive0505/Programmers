@@ -1,21 +1,16 @@
 #include <iostream>
-#include <string>
 #include <vector>
 
 using namespace std;
 
-    
-
-void DFS(vector<vector<int>>& coms, vector<bool>& visited, int vertex)
+void DFS(vector<vector<int>>& computers, vector<bool>& visited, int u, int n)
 {
-    visited[vertex] = true;
-    for (int i = 0; i < coms[vertex].size(); i++)
+    visited[u] = true;
+
+    for (int v = 0; v < n; v++)
     {
-        if (!visited[i] && coms[vertex][i])
-        {
-            visited[i] = true;
-            DFS(coms, visited, i);
-        }
+        if (computers[u][v] == 1 && !visited[v])
+            DFS(computers, visited, v, n);
     }
 }
 
@@ -29,8 +24,8 @@ int solution(int n, vector<vector<int>> computers)
     {
         if (!visited[i])
         {
-            DFS(computers, visited, i);
             answer++;
+            DFS(computers, visited, i, n);
         }
     }
 

@@ -8,52 +8,45 @@ using namespace std;
 
 const int INF = 987654321;
 
-void Dijkstra(vector<vector<int>>& graph, int& answer)
+int Dijkstra(const int n, int start, vector<vector<int>>& graph)
 {
+    vector<int> dists(n + 1, INF);
+    dists[start] = 0;
+
     priority_queue<pair<int, int>> pq;
 
-    vector<bool> visited(graph.size(), false);
-    vector<int> dist(graph.size(), INF);
-
-    visited[1] = true;
-    dist[1] = 0;
-
-    pq.push({ 0, 1 });
+    pq.push({ 0, start });
 
     while (!pq.empty())
     {
-        pair<int, int> top;
-
-        top = pq.top();
+        pair<int, int> current = pq.top();
         pq.pop();
-        int u = top.second;
-        int d = -top.first;
 
-        if (d < dist[u])
-            continue;
+        int u = current.second;
+        int currentDist = -current.first;
 
-        for (int i = 0; i < graph[u].size(); i++)
+        for (int v = 0; v < graph[u].size(); v++)
         {
-            int v = graph[u][i];
-            int nd = dist[v];
-
-            if (!visited[v] && d + 1 < nd)
+            if (dists[graph[u][v]] > dists[u] + 1)
             {
-                visited[v] = true;
-                dist[v] = d + 1;
-                pq.push({ -dist[v], v });
+                dists[graph[u][v]] = dists[u] + 1;
+                pq.push({ -dists[graph[u][v]], graph[u][v] });
             }
         }
     }
 
-    int M = dist[1];
-    for (int i = 1; i < dist.size(); i++)
+    int maxDist = *max_element(dists.begin() + 1, dists.end());
+
+
+    int cnt = 0;
+    for (int i = 1; i < dists.size(); i++)
     {
-        if (M < dist[i])
-            M = dist[i];
+        if (maxDist == dists[i])
+            cnt++;
     }
 
-    answer = count(dist.begin() + 1, dist.end(), M);
+
+    return cnt;
 }
 
 int solution(int n, vector<vector<int>> edge) 
@@ -64,14 +57,15 @@ int solution(int n, vector<vector<int>> edge)
 
     for (int i = 0; i < edge.size(); i++)
     {
-        int a = edge[i][0];
-        int b = edge[i][1];
+        int u, v;
+        u = edge[i][0];
+        v = edge[i][1];
 
-        graph[a].push_back(b);
-        graph[b].push_back(a);
+        graph[u].push_back(v);
+        graph[v].push_back(u);
     }
 
-    Dijkstra(graph, answer);
+    answer = Dijkstra(n, 1, graph);
 
     return answer;
 }

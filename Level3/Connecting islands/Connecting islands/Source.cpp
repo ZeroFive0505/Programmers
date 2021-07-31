@@ -1,6 +1,5 @@
 #include <iostream>
 #include <cstring>
-#include <string>
 #include <queue>
 #include <algorithm>
 #include <vector>
@@ -17,21 +16,23 @@ struct sNode
 {
     int u;
     int v;
-    int weight;
-};
+    int w;
 
-struct sNodeCmp
-{
-    bool operator()(const sNode& a, const sNode& b)
+    bool operator<(const sNode& rhs) const
     {
-        return a.weight > b.weight;
+        return this->w < rhs.w;
+    }
+
+    bool operator>(const sNode& rhs) const
+    {
+        return this->w > rhs.w;
     }
 };
 
 int GetParent(int v)
 {
-    int i = v;
-    for (; parents[i] != -1; i = parents[i]);
+    int i;
+    for (i = v; parents[i] != -1; i = parents[i]);
     return i;
 }
 
@@ -39,51 +40,45 @@ void SetUnion(int u, int v)
 {
     if (numSize[u] < numSize[v])
     {
-        parents[u] = v;
         numSize[v] += numSize[u];
+        parents[u] = v;
     }
     else
     {
-        parents[v] = u;
         numSize[u] += numSize[v];
+        parents[v] = u;
     }
 }
 
 int solution(int n, vector<vector<int>> costs) 
 {
     int answer = 0;
-
+    priority_queue<sNode, vector<sNode>, greater<sNode>> pq;
     memset(parents, -1, sizeof(parents));
-    fill(numSize, numSize + SIZE, 1);
-    priority_queue<sNode, vector<sNode>, sNodeCmp> pq;
 
     for (int i = 0; i < costs.size(); i++)
     {
         int u = costs[i][0];
         int v = costs[i][1];
-        int weight = costs[i][2];
+        int w = costs[i][2];
 
-        pq.push({ u, v, weight });
+        pq.push({ u, v, w });
     }
 
     int nEdge = 0;
 
     while (nEdge < n - 1)
     {
-        sNode top = pq.top();
+        sNode current = pq.top();
         pq.pop();
 
-        int u = top.u;
-        int v = top.v;
-        int w = top.weight;
-
-        int uParent = GetParent(u);
-        int vParent = GetParent(v);
+        int uParent = GetParent(current.u);
+        int vParent = GetParent(current.v);
 
         if (uParent != vParent)
         {
             SetUnion(uParent, vParent);
-            answer += w;
+            answer += current.w;
             nEdge++;
         }
     }

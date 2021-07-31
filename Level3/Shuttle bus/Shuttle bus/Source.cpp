@@ -5,8 +5,6 @@
 
 using namespace std;
 
-
-
 string solution(int n, int t, int m, vector<string> timetable) 
 {
     string answer;
@@ -31,44 +29,47 @@ string solution(int n, int t, int m, vector<string> timetable)
 
     int idx = 0;
 
-    int res = 0;
+    int busTime = 0;
 
     for (int i = 0; i < n; i++)
     {
         int capacity = m;
-       
+
         for (int j = idx; j < times.size(); j++)
         {
             if (times[j] <= start)
             {
-                idx++;
                 capacity--;
+                idx++;
 
                 if (capacity == 0)
                     break;
             }
         }
 
-        if (i + 1 == n)
+        if (i == n - 1)
         {
             if (capacity == 0)
-                res = times[idx] - 1;
+                busTime = times[idx - 1] - 1;
             else
-                res = start;
+                busTime = start;
         }
 
         start += t;
+
+        if (start >= (60 * 24))
+            break;
     }
 
     
-    int hour = res / 60;
+    int hour = busTime / 60;
 
     if (hour < 10)
         answer += "0" + to_string(hour) + ":";
     else
         answer += to_string(hour) + ":";
 
-    int minutes = res % 60;
+    int minutes = busTime % 60;
 
     if (minutes < 10)
         answer += "0" + to_string(minutes);

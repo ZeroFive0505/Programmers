@@ -1,5 +1,4 @@
 #include <iostream>
-#include <string>
 #include <algorithm>
 #include <vector>
 #include <cmath>
@@ -23,7 +22,6 @@ struct sDelta
 
 const int INF = 987654321;
 
-int row, col;
 
 struct sPoint
 {
@@ -49,26 +47,16 @@ struct sPointCmp
     }
 };
 
-bool BoundaryCheck(int ny, int nx, vector<vector<int>>& board)
-{
-    if (ny < 0 || nx < 0)
-        return true;
-    else if (ny >= board.size() || nx >= board[0].size())
-        return true;
-    else
-        return false;
-}
 
 int solution(vector<vector<int>> board) 
 {
     int answer = INF;
 
-
     for (int i = 0; i < SIZE; i++)
     {
         for (int j = 0; j < SIZE; j++)
         {
-            for (int k = 0; k < DIR; k++)
+            for (int k = 0; k < 4; k++)
             {
                 DIST[i][j][k] = INF;
             }
@@ -77,7 +65,8 @@ int solution(vector<vector<int>> board)
 
     priority_queue<sPoint, vector<sPoint>, sPointCmp> pq;
 
-    for (int i = 0; i < DIR; i++)
+
+    for (int i = 0; i < 4; i++)
     {
         DIST[0][0][i] = 0;
         pq.push(sPoint(0, 0, 0, i));
@@ -89,39 +78,39 @@ int solution(vector<vector<int>> board)
         sPoint current = pq.top();
         pq.pop();
 
-        int x = current.x;
-        int y = current.y;
-        int cost = current.cost;
-        int prevDir = current.prevDir;
+        int cx = current.x;
+        int cy = current.y;
+        int curCost = current.cost;
+        int curDir = current.prevDir;
 
         for (int i = 0; i < DIR; i++)
         {
-            int nx = x + Delta[i].x;
-            int ny = y + Delta[i].y;
+            int nx = cx + Delta[i].x;
+            int ny = cy + Delta[i].y;
+            int newDir = i;
 
-            if (abs(i - prevDir) == 2)
+            if (nx < 0 || ny < 0 || nx >= board[0].size() || ny >= board.size())
                 continue;
 
-            if (BoundaryCheck(ny, nx, board) || board[ny][nx] == 1)
+            if (board[ny][nx] == 1)
                 continue;
 
-
+            if (abs(curDir - newDir) == 2)
+                continue;
 
             int tempCost = 0;
 
-            if (i != prevDir)
-                tempCost = 600;
-            else
+            if (curDir == newDir)
                 tempCost = 100;
+            else if (curDir != newDir)
+                tempCost = 600;
 
-            int nextCost = cost + tempCost;
 
-            if (DIST[ny][nx][i] > nextCost)
+            if (DIST[ny][nx][newDir] > curCost + tempCost)
             {
-                DIST[ny][nx][i] = nextCost;
-                pq.push(sPoint(nx, ny, nextCost, i));
+                DIST[ny][nx][newDir] = curCost + tempCost;
+                pq.push(sPoint(nx, ny, curCost + tempCost, newDir));
             }
-
         }
     }
 
@@ -132,7 +121,6 @@ int solution(vector<vector<int>> board)
     {
         answer = min(answer, DIST[row][col][i]);
     }
-
 
     return answer;
 }

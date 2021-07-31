@@ -1,45 +1,38 @@
 #include <iostream>
+#include <cstring>
 #include <algorithm>
-#include <string>
 #include <vector>
 
 using namespace std;
 
+const int SIZE = 501;
+
+int cache[SIZE][SIZE];
+
+int n;
+
+vector<vector<int>> t;
+
+int dp(int r, int c)
+{
+    if (r == n - 1)
+        return t[r][c];
+
+    int& ret = cache[r][c];
+
+    if (ret != -1)
+        return ret;
+
+    return ret = max(dp(r + 1, c), dp(r + 1, c + 1)) + t[r][c];
+}
+
 int solution(vector<vector<int>> triangle) 
 {
     int answer = 0;
-
-    if (triangle.size() > 2)
-    {
-        triangle[1][0] += triangle[0][0];
-        triangle[1][1] += triangle[0][0];
-
-        for (int i = 2; i < triangle.size(); i++)
-        {
-            for (int j = 0; j < triangle[i].size(); j++)
-            {
-                if (j == 0)
-                    triangle[i][j] += triangle[i - 1][j];
-                else if (j == triangle[i].size() - 1)
-                    triangle[i][j] += triangle[i - 1][j - 1];
-                else
-                    triangle[i][j] += max(triangle[i - 1][j - 1], triangle[i - 1][j]);
-            }
-        }
-
-        for (int i = 0; i < triangle[triangle.size() - 1].size(); i++)
-        {
-            answer = max(answer, triangle[triangle.size() - 1][i]);
-        }
-    }
-    else
-    {
-        triangle[1][0] += triangle[0][0];
-        triangle[1][1] += triangle[0][0];
-
-        answer = max(triangle[1][0], triangle[1][1]);
-    }
-
+    t = triangle;
+    n = triangle.size();
+    memset(cache, -1, sizeof(cache));
+    answer = dp(0, 0);
     return answer;
 }
 

@@ -13,38 +13,36 @@ int solution(vector<string> lines)
 
     for (int i = 0; i < lines.size(); i++)
     {
-        string traffic = lines[i];
-        traffic.pop_back();
-        string hourStr, minuteStr, secStr, miliSecStr;
-        int hour, minute, sec, miliSec;
+        string log = lines[i];
 
-        hourStr = traffic.substr(11, 12);
-        minuteStr = traffic.substr(14, 15);
-        secStr = traffic.substr(17, 18);
-        miliSecStr = traffic.substr(20, 22);
+        string hourStr = log.substr(11, 2);
+        string minStr = log.substr(14, 2);
+        string secString = log.substr(17, 2);
+        string miliSec = log.substr(20, 3);
 
-        hour = stoi(hourStr) * 3600 * 1000;
-        minute = stoi(minuteStr) * 60 * 1000;
-        sec = stoi(secStr) * 1000;
-        miliSec = stoi(miliSecStr);
+        string durationStr = log.substr(24, 5);
 
-        int taskTime = stof(traffic.substr(24, traffic.length())) * 1000;
+        int hours = stoi(hourStr) * 3600 * 1000;
+        int minutes = stoi(minStr) * 60 * 1000;
+        int seconds = stoi(secString) * 1000 + stoi(miliSec);
+        int duration = stof(durationStr) * 1000;
 
-        start.push_back(hour + minute + sec + miliSec - taskTime + 1);
-        end.push_back(hour + minute + sec + miliSec);
+        start.push_back(hours + minutes + seconds - duration + 1);
+        end.push_back(hours + minutes + seconds);
     }
+
 
     for (int i = 0; i < lines.size(); i++)
     {
         int endTime = end[i] + 1000;
-        int tmp = 0;
+        int cnt = 0;
         for (int j = i; j < lines.size(); j++)
         {
             if (start[j] < endTime)
-                tmp++;
+                cnt++;
         }
 
-        answer = max(tmp, answer);
+        answer = max(answer, cnt);
     }
 
     return answer;

@@ -6,14 +6,13 @@
 
 using namespace std;
 
-int GetN_Number(int N, int cnt)
+int GetN_Number(int n, int power)
 {
     int ret = 0;
-
-    while (cnt > 0)
+    while (power)
     {
-        cnt--;
-        ret += N * pow(10, cnt);
+        power--;
+        ret = ret + n * pow(10, power);
     }
 
     return ret;
@@ -27,13 +26,14 @@ int solution(int N, int number)
     int answer = -1;
 
     vector<set<int>> v(8);
-
+    
     int cnt = 1;
-
     for (auto& i : v)
+    {
         i.insert(GetN_Number(N, cnt++));
+    }
 
-    for (int i = 1; i < 8; i++)
+    for (int i = 1; i < v.size(); i++)
     {
         for (int j = 0; j < i; j++)
         {

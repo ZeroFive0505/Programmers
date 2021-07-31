@@ -17,7 +17,9 @@ int solution(int m, int n, vector<vector<int>> city_map)
     int answer = 0;
     memset(RIGHT, 0, sizeof(RIGHT));
     memset(DOWN, 0, sizeof(DOWN));
-    RIGHT[1][1] = DOWN[1][1] = 1;
+
+    RIGHT[1][1] = 1;
+    DOWN[1][1] = 1;
 
     for (int i = 1; i <= m; i++)
     {
@@ -26,20 +28,21 @@ int solution(int m, int n, vector<vector<int>> city_map)
             if (city_map[i - 1][j - 1] == 0)
             {
                 RIGHT[i][j] = (RIGHT[i][j] + RIGHT[i][j - 1] + DOWN[i - 1][j]) % MOD;
-                DOWN[i][j] = (DOWN[i][j] + RIGHT[i][j - 1] + DOWN[i - 1][j]) % MOD;
+                DOWN[i][j] = (DOWN[i][j] + DOWN[i - 1][j] + RIGHT[i][j - 1]) % MOD;
             }
             else if (city_map[i - 1][j - 1] == 1)
             {
                 RIGHT[i][j] = 0;
                 DOWN[i][j] = 0;
             }
-            else
+            else if (city_map[i - 1][j - 1] == 2)
             {
                 RIGHT[i][j] = RIGHT[i][j - 1];
                 DOWN[i][j] = DOWN[i - 1][j];
             }
         }
     }
+
 
     answer = (RIGHT[m][n - 1] + DOWN[m - 1][n]) % MOD;
 

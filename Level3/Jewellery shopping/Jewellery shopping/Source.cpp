@@ -14,25 +14,27 @@ vector<int> solution(vector<string> gems)
 
     int start = 0;
     int end = 0;
-    for (int i = 0; gems.size(); i++)
+
+    for (int i = 0; i < gems.size(); i++)
     {
         string key = gems[i];
         hashMap[key]++;
+
         if (hashMap.size() == s.size())
             break;
         end++;
     }
-    int m = end - start;
+
+    int MIN = end - start;
 
     answer[0] = start + 1;
     answer[1] = end + 1;
 
-  
     while (end < gems.size())
     {
         string key = gems[start];
-        hashMap[key]--;
         start++;
+        hashMap[key]--;
 
         if (hashMap[key] == 0)
         {
@@ -49,13 +51,12 @@ vector<int> solution(vector<string> gems)
                 break;
         }
 
-        if (m > end - start)
+        if (MIN > end - start)
         {
-            m = end - start;
+            MIN = end - start;
             answer[0] = start + 1;
             answer[1] = end + 1;
         }
-
     }
 
     return answer;

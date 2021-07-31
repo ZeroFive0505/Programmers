@@ -10,7 +10,7 @@ int solution(int n, int m, vector<vector<int>> edge_list, int k, vector<int> gps
 {
     int answer = 0;
     
-    vector<vector<int>> edge(n, vector<int>(n));
+    vector<vector<int>> edge(n, vector<int>(n, 0));
 
     for (int i = 0; i < edge_list.size(); i++)
     {
@@ -47,8 +47,8 @@ int solution(int n, int m, vector<vector<int>> edge_list, int k, vector<int> gps
     answer = cache[k - 1][gps_log[k - 1]];
 
     if (answer == INF)
-        return -1;
-
+        answer = -1;
+    
     return answer;
 }
 
