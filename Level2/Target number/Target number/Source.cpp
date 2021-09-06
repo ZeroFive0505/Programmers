@@ -4,27 +4,25 @@
 using namespace std;
 
 int cnt = 0;
-
-void DFS(vector<int>& numbers, int sum, int currentSize, int target)
+int N;
+void DFS(int depth, vector<int>& numbers, int sum, int target)
 {
-	if (currentSize == numbers.size())
+	if (depth == N)
 	{
-		if(sum == target)
+		if(sum == target)	
 			cnt++;
-
 		return;
 	}
 
-	DFS(numbers, sum + numbers[currentSize], currentSize + 1, target);
-	DFS(numbers, sum - numbers[currentSize], currentSize + 1, target);
+	DFS(depth + 1, numbers, sum + numbers[depth], target);
+	DFS(depth + 1, numbers, sum - numbers[depth], target);
 }
-
 
 int solution(vector<int> numbers, int target)
 {
 	int answer = 0;
-
-	DFS(numbers, 0, 0, target);
+	N = numbers.size();
+	DFS(0, numbers, 0, target);
 	answer = cnt;
 	return answer;
 }

@@ -1,5 +1,4 @@
 #include <iostream>
-#include <string>
 #include <vector>
 
 using namespace std;
@@ -10,23 +9,13 @@ void Hanoi(int n, int src, int temp, int dest)
 {
     if (n == 1)
     {
-        vector<int> t;
-        t.push_back(src);
-        t.push_back(dest);
-        answer.push_back(t);
+        answer.push_back({ src, dest });
+        return;
     }
-    else
-    {
-        Hanoi(n - 1, src, dest, temp);
 
-        vector<int> t;
-        t.push_back(src);
-        t.push_back(dest);
-        answer.push_back(t);
-
-
-        Hanoi(n - 1, temp, src, dest);
-    }
+    Hanoi(n - 1, src, dest, temp);
+    answer.push_back({ src, dest });
+    Hanoi(n - 1, temp, src, dest);
 }
 
 vector<vector<int>> solution(int n) 

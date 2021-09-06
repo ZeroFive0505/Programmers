@@ -5,9 +5,9 @@
 
 using namespace std;
 
-const int INF = 987654321;
-
 vector<vector<int>> BOARD;
+
+const int INF = 987654321;
 
 struct sPoint
 {
@@ -15,58 +15,52 @@ struct sPoint
     int col;
     int cnt;
 
-    bool operator==(const sPoint& rhs)
+    bool operator==(const sPoint& rhs) const
     {
-        if (this->row == rhs.row && this->col == rhs.col)
-            return true;
-        else
-            return false;
+        return row == rhs.row && col == rhs.col;
     }
 };
-
-const int CARDS = 7;
-const int SIZE = 4;
 
 struct sDelta
 {
     int row;
     int col;
-} Delta[] = {
+}Delta[] = {
     {-1, 0},
     {1, 0},
     {0, -1},
     {0, 1}
 };
 
-int BFS(sPoint current, sPoint dest)
+int BFS(const sPoint& start, const sPoint& end)
 {
+    vector<vector<bool>> visited(BOARD.size(), vector<bool>(BOARD[0].size(), false));
+    visited[start.row][start.col] = true;
+
     queue<sPoint> q;
 
-    vector<vector<bool>> visited(4, vector<bool>(4, false));
-
-    q.push(current);
+    q.push(start);
 
     while (!q.empty())
     {
-        sPoint cur = q.front();
+        sPoint current = q.front();
         q.pop();
 
-        if (cur == dest)
-            return cur.cnt;
-
+        if (current == end)
+            return current.cnt;
 
         for (int i = 0; i < 4; i++)
         {
-            int nr = cur.row + Delta[i].row;
-            int nc = cur.col + Delta[i].col;
+            int nr = current.row + Delta[i].row;
+            int nc = current.col + Delta[i].col;
 
-            if (nr < 0 || nr > 3 || nc < 0 || nc > 3)
+            if (nr < 0 || nc < 0 || nr >= BOARD.size() || nc >= BOARD[0].size())
                 continue;
 
             if (!visited[nr][nc])
             {
                 visited[nr][nc] = true;
-                q.push({ nr, nc, cur.cnt + 1 });
+                q.push({ nr, nc, current.cnt + 1 });
             }
 
 
@@ -75,8 +69,8 @@ int BFS(sPoint current, sPoint dest)
                 if (BOARD[nr][nc] != 0)
                     break;
 
-                if (nr + Delta[i].row < 0 || nr + Delta[i].row > 3 || 
-                    nc + Delta[i].col < 0 || nc + Delta[i].col > 3)
+                if (nr + Delta[i].row < 0 || nc + Delta[i].col < 0 || nr + Delta[i].row >= BOARD.size() ||
+                    nc + Delta[i].col >= BOARD[0].size())
                     break;
 
                 nr += Delta[i].row;
@@ -86,7 +80,7 @@ int BFS(sPoint current, sPoint dest)
             if (!visited[nr][nc])
             {
                 visited[nr][nc] = true;
-                q.push({ nr, nc, cur.cnt + 1 });
+                q.push({ nr, nc, current.cnt + 1 });
             }
         }
     }
@@ -94,49 +88,48 @@ int BFS(sPoint current, sPoint dest)
     return INF;
 }
 
-int Permutate(sPoint current)
+int Permute(sPoint current)
 {
     int ret = INF;
-    for (int card = 1; card < CARDS; card++)
+
+    for (int cardNum = 1; cardNum < 7; cardNum++)
     {
-        vector<sPoint> cardList;
+        vector<sPoint> cardPairs;
+
         for (int i = 0; i < BOARD.size(); i++)
         {
-            for (int j = 0; j < BOARD[i].size(); j++)
+            for (int j = 0; j < BOARD[0].size(); j++)
             {
-                if (BOARD[i][j] == card)
-                    cardList.push_back({ i, j, 0 });
+                if (cardNum == BOARD[i][j])
+                    cardPairs.push_back({ i, j, 0 });
             }
         }
 
-
-        if (cardList.empty())
+        if (cardPairs.empty())
             continue;
 
-        int first = BFS(current, cardList[0]) + BFS(cardList[0], cardList[1]) + 2;
-        int second = BFS(current, cardList[1]) + BFS(cardList[1], cardList[0]) + 2;
+        int first = BFS(current, cardPairs[0]) + BFS(cardPairs[0], cardPairs[1]) + 2;
+        int second = BFS(current, cardPairs[1]) + BFS(cardPairs[1], cardPairs[0]) + 2;
 
-        for (int i = 0; i < 2; i++)
-            BOARD[cardList[i].row][cardList[i].col] = 0;
+        for (int i = 0; i < cardPairs.size(); i++)
+            BOARD[cardPairs[i].row][cardPairs[i].col] = 0;
 
-        ret = min(ret, first + Permutate(cardList[1]));
-        ret = min(ret, second + Permutate(cardList[0]));
+        ret = min(ret, first + Permute(cardPairs[1]));
+        ret = min(ret, second + Permute(cardPairs[0]));
 
-        for (int i = 0; i < 2; i++)
-            BOARD[cardList[i].row][cardList[i].col] = card;
-
+        for (int i = 0; i < cardPairs.size(); i++)
+            BOARD[cardPairs[i].row][cardPairs[i].col] = cardNum;
     }
 
     if (ret == INF)
         return 0;
-
     return ret;
 }
 
 int solution(vector<vector<int>> board, int r, int c)
 {
     BOARD = board;
-    return Permutate({ r, c, 0 });
+    return Permute({ r, c, 0 });
 }
 
 int main()

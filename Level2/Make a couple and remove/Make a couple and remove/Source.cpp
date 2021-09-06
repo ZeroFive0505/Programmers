@@ -8,9 +8,8 @@ int solution(string s)
 {
     int answer = 0;
     stack<char> st;
-    int size = s.size();
-
-    for (int i = 0; i < size; i++)
+    
+    for (int i = 0; i < s.size(); i++)
     {
         if (st.empty())
             st.push(s[i]);
@@ -34,7 +33,7 @@ int solution(string s)
 int main()
 {
 
-    string s = "baabaa";
+    string s = "cdcd";
     cout << solution(s) << "\n";
 
     return 0;

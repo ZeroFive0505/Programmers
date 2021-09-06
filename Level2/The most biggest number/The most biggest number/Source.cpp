@@ -11,22 +11,25 @@ string solution(vector<int> numbers)
 
     vector<string> v;
 
-    for (auto i : numbers)
+    for (int i : numbers)
         v.push_back(to_string(i));
 
     sort(v.begin(), v.end(), [](const string& a, const string& b) {
         return a + b > b + a;
     });
 
-    for (auto i : v)
-        answer += i;
+    if (v[0] == "0")
+        return "0";
+
+    for (const string& s : v)
+        answer += s;
 
     return answer;
 }
 
 int main()
 {
-    vector<int> numbers = { 6, 10, 2 };
+    vector<int> numbers = { 3, 30, 34, 5, 9 };
 
     cout << solution(numbers) << "\n";
 

@@ -8,7 +8,6 @@ using namespace std;
 int solution(string s)
 {
     int answer = 1;
-
     int size = s.size();
 
     while (size >= 2)
@@ -18,7 +17,6 @@ int solution(string s)
             int left = i;
             int right = size + i - 1;
             bool palindrome = true;
-
             while (left <= right)
             {
                 if (s[left] != s[right])
@@ -33,7 +31,6 @@ int solution(string s)
             if (palindrome)
                 return size;
         }
-
         size--;
     }
 

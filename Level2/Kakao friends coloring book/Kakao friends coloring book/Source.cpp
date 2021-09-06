@@ -1,70 +1,67 @@
 #include <iostream>
-#include <set>
 #include <vector>
-#include <limits.h>
 #include <algorithm>
 
 using namespace std;
 
-bool boundaryCheck(int y, int x, int m, int n)
+const int INF = 987654321;
+
+int M, N;
+
+bool BoundaryCheck(int y, int x)
 {
-	if (y >= m || x >= n)
-		return true;
-	else if (y < 0 || x < 0)
+	if (y < 0 || x < 0 || y >= M || x >= N)
 		return true;
 	else
 		return false;
 }
 
-int DFS(int y, int x, int m, int n, int colorCode, vector<vector<int>>& picture, vector<vector<bool>>& visited)
+int DFS(vector<vector<int>>& picture, int y, int x, vector<vector<bool>>& visited, int color)
 {
-	int cnt = 1;
 	visited[y][x] = true;
-	if (!boundaryCheck(y + 1, x, m, n) && colorCode == picture[y + 1][x] && !visited[y + 1][x])
-		cnt += DFS(y + 1, x, m, n, colorCode, picture, visited);
-	if (!boundaryCheck(y - 1, x, m, n) && colorCode == picture[y - 1][x] && !visited[y - 1][x])
-		cnt += DFS(y - 1, x, m, n, colorCode, picture, visited);
-	if (!boundaryCheck(y, x + 1, m, n) && colorCode == picture[y][x + 1] && !visited[y][x + 1])
-		cnt += DFS(y, x + 1, m, n, colorCode, picture, visited);
-	if (!boundaryCheck(y, x - 1, m, n) && colorCode == picture[y][x - 1] && !visited[y][x - 1])
-		cnt += DFS(y, x - 1, m, n, colorCode, picture, visited);
+	int cnt = 1;
+
+	if (!BoundaryCheck(y + 1, x) && !visited[y + 1][x] && picture[y + 1][x] == color)
+		cnt += DFS(picture, y + 1, x, visited, color);
+
+	if (!BoundaryCheck(y - 1, x) && !visited[y - 1][x] && picture[y - 1][x] == color)
+		cnt += DFS(picture, y - 1, x, visited, color);
+
+	if (!BoundaryCheck(y, x - 1) && !visited[y][x - 1] && picture[y][x - 1] == color)
+		cnt += DFS(picture, y, x - 1, visited, color);
+
+	if (!BoundaryCheck(y, x + 1) && !visited[y][x + 1] && picture[y][x + 1] == color)
+		cnt += DFS(picture, y, x + 1, visited, color);
 
 	return cnt;
+
 }
 
 vector<int> solution(int m, int n, vector<vector<int>> picture)
 {
-	int number_of_area = 0;
-	int max_size_of_one_area = 0;
-	vector<vector<bool>> visited(m);
+	M = m;
+	N = n;
+	vector<int> answer(2, 0);
+	vector<vector<bool>> visited(m, vector<bool>(n, false));
 
-	for (int i = 0; i < m; i++)
-	{
-		for (int j = 0; j < n; j++)
-			visited[i].push_back(false);
-	}
 
-	int maxCnt = INT_MIN;
 	int areaCnt = 0;
-
-	for (int y = 0; y < m; y++)
+	int maxCnt = -INF;
+	for (int i = 0; i < picture.size(); i++)
 	{
-		for (int x = 0; x < n; x++)
+		for (int j = 0; j < picture[i].size(); j++)
 		{
-			if (picture[y][x] != 0 && !visited[y][x])
+			if (!visited[i][j] && picture[i][j] != 0)
 			{
-				int temp = DFS(y, x, m, n, picture[y][x], picture, visited);
-				maxCnt = max(temp, maxCnt);
 				areaCnt++;
+				int cnt = DFS(picture, i, j, visited, picture[i][j]);
+				maxCnt = max(maxCnt, cnt);
 			}
 		}
 	}
 
-	number_of_area = areaCnt;
-	max_size_of_one_area = maxCnt;
-	vector<int> answer(2);
-	answer[0] = number_of_area;
-	answer[1] = max_size_of_one_area;
+	answer[0] = areaCnt;
+	answer[1] = maxCnt;
 	return answer;
 }
 

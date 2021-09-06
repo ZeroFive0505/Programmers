@@ -19,35 +19,27 @@ string solution(string play_time, string adv_time, vector<string> logs)
 {
     string answer = "";
 
-    int iPlayTime = 0;
-    int iAdvTime = 0;
+    int playTime = stoi(play_time.substr(0, 2)) * 3600 + stoi(play_time.substr(3, 2)) * 60 + stoi(play_time.substr(6, 2));
+    int advTime = stoi(adv_time.substr(0, 2)) * 3600 + stoi(adv_time.substr(3, 2)) * 60 + stoi(adv_time.substr(6, 2));
 
-    iPlayTime = stoi(play_time.substr(0, 2)) * 3600 + stoi(play_time.substr(3, 2)) * 60 + stoi(play_time.substr(6, 2));
-    iAdvTime = stoi(adv_time.substr(0, 2)) * 3600 + stoi(adv_time.substr(3, 2)) * 60 + stoi(adv_time.substr(6, 2));
-
-    if (iPlayTime == iAdvTime)
+    if (playTime == advTime)
         return "00:00:00";
 
-    vector<sLine> iLogs;
-    int id = 1;
     for (int i = 0; i < logs.size(); i++)
     {
-        string log = logs[i];
+        int startHour = stoi(logs[i].substr(0, 2)) * 3600;
+        int startMin = stoi(logs[i].substr(3, 2)) * 60;
+        int startSec = stoi(logs[i].substr(6, 2));
 
-        int startHour = stoi(log.substr(0, 2)) * 3600;
-        int startMin = stoi(log.substr(3, 2)) * 60;
-        int startSec = stoi(log.substr(6, 2));
+        int endHour = stoi(logs[i].substr(9, 2)) * 3600;
+        int endMin = stoi(logs[i].substr(12, 2)) * 60;
+        int endSec = stoi(logs[i].substr(15, 2));
 
-        int totalStart = startHour + startMin + startSec;
+        int startTime = startHour + startMin + startSec;
+        int endTime = endHour + endMin + endSec;
 
-        int endHour = stoi(log.substr(9, 2)) * 3600;
-        int endMin = stoi(log.substr(12, 2)) * 60;
-        int endSec = stoi(log.substr(15, 2));
-
-        int totalEnd = endHour + endMin + endSec;
-
-        for (int i = totalStart; i < totalEnd; i++)
-            AD[i]++;
+        for (int j = startTime; j < endTime; j++)
+            AD[j]++;
     }
 
     int idx = 0;
@@ -56,7 +48,7 @@ string solution(string play_time, string adv_time, vector<string> logs)
 
     queue<int> q;
 
-    for (int i = 0; i < iAdvTime; i++)
+    for (int i = 0; i < advTime; i++)
     {
         sum += AD[i];
         q.push(AD[i]);
@@ -64,7 +56,7 @@ string solution(string play_time, string adv_time, vector<string> logs)
 
     maxSum = sum;
 
-    for (int i = iAdvTime; i < iPlayTime; i++)
+    for (int i = advTime; i < playTime; i++)
     {
         sum += AD[i];
         q.push(AD[i]);
@@ -74,34 +66,37 @@ string solution(string play_time, string adv_time, vector<string> logs)
 
         if (sum > maxSum)
         {
-            idx = i - iAdvTime + 1;
+            idx = i - advTime + 1;
             maxSum = sum;
         }
     }
 
-    int h = idx / 3600;
+    int hour = idx / 3600;
 
-    if (h < 10)
-        answer += "0" + to_string(h) + ":";
+    if (hour >= 10)
+        answer += to_string(hour);
     else
-        answer += to_string(h) + ":";
-    idx %= 3600;
+        answer += "0" + to_string(hour);
 
-    int m = idx / 60;
+    answer += ":";
 
-    if (m < 10)
-        answer += "0" + to_string(m) + ":";
+    int minutes = idx % 3600 / 60;
+
+    if (minutes >= 10)
+        answer += to_string(minutes);
     else
-        answer += to_string(m) + ":";
-    idx %= 60;
+        answer += "0" + to_string(minutes);
 
-    int s = idx;
+    answer += ":";
 
-    if (s < 10)
-        answer += "0" + to_string(s);
+    int seconds = idx % 60;
+
+    if (seconds >= 10)
+        answer += to_string(seconds);
     else
-        answer += to_string(s);
-
+        answer += "0" + to_string(seconds);
+    
+    
     return answer;
 }
 

@@ -7,31 +7,37 @@ using namespace std;
 
 int solution(vector<vector<int>> routes) 
 {
-    int answer = 1;
+    int answer = 0;
     vector<pair<int, int>> v;
 
     for (int i = 0; i < routes.size(); i++)
-        v.push_back({ routes[i][0], routes[i][1] });
-    
+    {
+        int start = routes[i][0];
+        int end = routes[i][1];
+
+        v.push_back({ start, end });
+    }
+
     sort(v.begin(), v.end(), [](const pair<int, int>& a, const pair<int, int>& b) {
-        if (a.second != b.second)
+        if (a.second == b.second)
             return a.first < b.first;
         else
-            a.second < b.second;
+            return a.second < b.second;
     });
 
-    pair<int, int> p = v[0];
+    pair<int, int> temp = v[0];
+    answer = 1;
 
     for (int i = 1; i < v.size(); i++)
     {
-        if (v[i].first > p.second)
+        if (temp.second < v[i].first)
         {
-            p = v[i];
             answer++;
+            temp = v[i];
         }
 
-        if (v[i].second <= p.second)
-            p = v[i];
+        if (temp.second >= v[i].second)
+            temp = v[i];
     }
 
     return answer;

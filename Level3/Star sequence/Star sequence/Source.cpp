@@ -8,7 +8,8 @@ using namespace std;
 int solution(vector<int> a) 
 {
     int answer = -1;
-    vector<int> cnt(a.size() + 1, 0);
+
+    vector<int> cnt(a.size(), 0);
 
     for (int i = 0; i < a.size(); i++)
         cnt[a[i]]++;
@@ -34,7 +35,7 @@ int solution(vector<int> a)
             j++;
         }
 
-        answer = max(answer, result);
+        answer = max(result, answer);
     }
 
     return answer * 2;

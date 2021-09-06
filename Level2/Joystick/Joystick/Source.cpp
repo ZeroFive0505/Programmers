@@ -8,35 +8,36 @@ int solution(string name)
 {
     int answer = 0;
 
-    int moves = name.length() - 1;
+    int shifts = name.size() - 1;
 
-    for (int i = 0; i < name.length(); i++)
+    for (int i = 0; i < name.size(); i++)
     {
         if (name[i] == 'A')
         {
-            int Apos = i;
+            int lastA = i;
+            while (lastA < name.size() && name[lastA] == 'A')
+                lastA++;
 
-            while (Apos < name.length() && name[Apos] == 'A')
-                Apos++;
-            int BPos = Apos;
-            int left = i == 0 ? 0 : i - 1;
-            int right = name.length() - BPos;
-
-            moves = min(moves, left + right + min(left, right));
+            int left = lastA == 0 ? 0 : i - 1;
+            int right = name.size() - lastA;
+            shifts = min(shifts, left + right + min(left, right));
         }
     }
 
-    for (auto c : name)
-        moves += min(c - 'A', 'Z' - c + 1);
+   
+    for (int i = 0; i < name.size(); i++)
+    {
+        shifts += min(name[i] - 'A', 'Z' - name[i] + 1);
+    }
 
-    answer = moves;
+    answer = shifts;
 
     return answer;
 }
 
 int main()
 {
-    string name = "BBAAAAAAABBBB";
+    string name = "JEROEN";
 
     cout << solution(name) << "\n";
 

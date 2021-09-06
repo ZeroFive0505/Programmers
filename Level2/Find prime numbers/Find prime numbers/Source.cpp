@@ -1,19 +1,25 @@
 #include <iostream>
 #include <string>
+#include <set>
 #include <algorithm>
 #include <vector>
 #include <cmath>
 
 using namespace std;
 
-bool IsPrime(int n)
+bool IsPrime(int num)
 {
-    if (n < 2)
+    if (num < 2)
         return false;
 
-    for (int i = 2; i <= sqrt(n); i++)
+    if (num == 2)
+        return true;
+
+    int n = sqrt(num);
+    
+    for (int i = 2; i <= n; i++)
     {
-        if (n % i == 0)
+        if (num % i == 0)
             return false;
     }
 
@@ -23,32 +29,35 @@ bool IsPrime(int n)
 int solution(string numbers) 
 {
     int answer = 0;
-    vector<char> perm;
-    vector<int> v;
-    for (auto i : numbers)
-    {
-        perm.push_back(i);
-        v.push_back(i - '0');
-    }
+    vector<int> perm;
 
-    sort(perm.begin(), perm.end());
+    for (int i = 0; i < numbers.size(); i++)
+        perm.push_back(i);
+
+    vector<string> v;
 
     do
     {
-        string t = "";
-        for (int i = 0; i < perm.size(); i++)
-            t += perm[i];
+        string t;
+        for (int i = 0; i < numbers.size(); i++)
+        {
+            t += numbers[perm[i]];
+            v.push_back(t);
+        }
 
-        v.push_back(stoi(t));
+
     } while (next_permutation(perm.begin(), perm.end()));
 
-    sort(v.begin(), v.end());
-    v.erase(unique(v.begin(), v.end()), v.end());
+    set<int> s;
 
-    for (auto i : v)
+    for (int i = 0; i < v.size(); i++)
     {
-        if (IsPrime(i))
+        int n = stoi(v[i]);
+        if (IsPrime(stoi(v[i])) && s.count(n) == 0)
+        {
             answer++;
+            s.insert(n);
+        }
     }
 
     return answer;

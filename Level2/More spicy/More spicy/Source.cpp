@@ -19,29 +19,28 @@ int solution(vector<int> scoville, int K)
         pq.push(i);
 
     int cnt = 1;
-    int sum;
+
     while (pq.size() >= 2)
     {
-        int theLeast = pq.top();
+        int first = pq.top();
         pq.pop();
-        int theSecond = pq.top();
+        int second = pq.top();
         pq.pop();
 
-        sum = Formular(theLeast, theSecond);
+        int mix = Formular(first, second);
 
-        pq.push(sum);
+        pq.push(mix);
 
-        if (pq.top() > K)
+        if (pq.top() >= K)
             break;
 
         cnt++;
     }
 
-    if (pq.top() > K)
+    if (pq.top() >= K)
         answer = cnt;
     else
         answer = -1;
-    
 
     return answer;
 }

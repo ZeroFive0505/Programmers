@@ -13,12 +13,9 @@ string solution(int n)
 
     while (n)
     {
-        n -= 1;
-
-        char c = convert[n % SIZE];
-
-        answer = c + answer;
-
+        n--;
+        int index = n % SIZE;
+        answer = convert[index] + answer;
         n /= SIZE;
     }
 

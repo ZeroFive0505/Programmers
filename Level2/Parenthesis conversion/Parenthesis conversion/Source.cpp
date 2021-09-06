@@ -6,25 +6,26 @@
 
 using namespace std;
 
-bool check(string p)
+bool Check(const string& s)
 {
-    stack<char> s;
-    int len = p.length();
+    stack<char> st;
 
-    for (int i = 0; i < len; i++)
+    for (int i = 0; i < s.size(); i++)
     {
-        char ch = p[i];
-
-        if (ch == '(')
-            s.push(ch);
+        if (st.empty())
+        {
+            st.push(s[i]);
+        }
         else
         {
-            if (!s.empty() && s.top() == '(')
-                s.pop();
+            if (s[i] == '(')
+                st.push(s[i]);
+            else if (!st.empty() && s[i] == ')')
+                st.pop();
         }
     }
 
-    if (s.empty())
+    if (st.empty())
         return true;
     else
         return false;
@@ -32,20 +33,18 @@ bool check(string p)
 
 string recur(string p)
 {
-    if (p.length() == 0)
+    if (p.empty())
         return "";
-
     int openCount = 0;
     int closeCount = 0;
+
     string u, v;
 
-    for (int i = 0; i < p.length(); i++)
+    for (int i = 0; i < p.size(); i++)
     {
-        char ch = p[i];
-
-        if (ch == '(')
+        if (p[i] == '(')
             openCount++;
-        else
+        else if (p[i] == ')')
             closeCount++;
 
         if (openCount == closeCount)
@@ -56,33 +55,32 @@ string recur(string p)
         }
     }
 
-    if (check(u))
+    if (Check(u))
         return u + recur(v);
 
-    string t;
+    string temp = "(";
 
-    t += '(';
+    temp += recur(v);
 
-    t += recur(v);
+    temp += ")";
 
-    t += ')';
+    u.erase(u.begin());
+    u.pop_back();
 
-    u = u.substr(1, u.length() - 2);
-
-    for (int i = 0; i < u.length(); i++)
+    for (int i = 0; i < u.size(); i++)
     {
         if (u[i] == '(')
-            t += ')';
+            temp += ')';
         else
-            t += '(';
+            temp += '(';
     }
 
-    return t;
+    return temp;
 }
 
 string solution(string p)
 {
-    if (check(p))
+    if (Check(p))
         return p;
 
     return recur(p);

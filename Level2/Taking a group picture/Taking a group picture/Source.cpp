@@ -5,19 +5,16 @@
 
 using namespace std;
 
-bool check(char comp, int dist, int realDist)
+bool Check(char comp, int dist, int realDist)
 {
     switch (comp)
     {
     case '=':
         return dist == realDist;
-        break;
     case '>':
         return realDist > dist;
-        break;
     case '<':
         return realDist < dist;
-        break;
     }
 }
 
@@ -26,25 +23,38 @@ int solution(int n, vector<string> data)
     int answer = 0;
     string friends = "ACFJMNRT";
     sort(friends.begin(), friends.end());
-
+  
     do
     {
         bool match = true;
-        for (int i = 0; i < n; i++)
+        for (int i = 0; i < data.size(); i++)
         {
-            string d = data[i];
-            char friendA = d[0];
-            char friendB = d[2];
+            string s = data[i];
 
-            char comp = d[3];
+            char friendA = s[0];
+            char friendB = s[2];
 
-            char dist = d[4];
+            char comp = s[3];
+            int desireDist = s[4] - '0';
 
+            int distA = -1;
+            int distB = -1;
+
+            for (int i = 0; i < friends.size(); i++)
+            {
+                if (friends[i] == friendA)
+                    distA = i;
+
+                if (friends[i] == friendB)
+                    distB = i;
+
+                if (distA != -1 && distB != -1)
+                    break;
+            }
             
-            int realDist = friends.find(friendA) - friends.find(friendB);
-            realDist = abs(realDist) - 1;
+            int currentDist = abs(distB - distA) - 1;
 
-            if (check(comp, dist - '0', realDist))
+            if (Check(comp, desireDist, currentDist))
                 continue;
 
             match = false;
@@ -62,8 +72,8 @@ int solution(int n, vector<string> data)
 int main()
 {
     vector<string> d = {
-        {"M~C<2"},
-        {"C~M>1"}
+        {"N~F=0"},
+        {"R~T>2"}
     };
 
     int n = 2;

@@ -1,5 +1,4 @@
 #include <iostream>
-#include <string>
 #include <vector>
 #include <algorithm>
 
@@ -9,33 +8,28 @@ vector<int> solution(int n, int s)
 {
     vector<int> answer;
 
-
-    if (s / n == 0)
+    if (n > s)
         return vector<int>{-1};
 
-    int quotient = s / n;
-    int remainder = s % n;
-
-    vector<int> temp;
+    int num = s / n;
 
     for (int i = 0; i < n; i++)
-        temp.push_back(quotient);
+        answer.push_back(num);
+
+    int remainder = s % n;
 
     for (int i = 0; i < remainder; i++)
-        temp[i]++;
+        answer[i]++;
 
-    sort(temp.begin(), temp.end());
+    sort(answer.begin(), answer.end());
 
-
-	answer = temp;
 	return answer;
-
 }
 
 int main()
 {
     int n = 2;
-    int s = 8;
+    int s = 9;
 
     vector<int> ans = solution(n, s);
 

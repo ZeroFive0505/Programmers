@@ -1,5 +1,4 @@
 #include <iostream>
-#include <string>
 #include <algorithm>
 #include <vector>
 
@@ -13,17 +12,17 @@ int solution(vector<int> a)
     if (a.size() <= 2)
         return a.size();
 
-    vector<pair<int, int>> v(a.size());
+    vector<pair<int, int>> v;
 
     for (int i = 0; i < a.size(); i++)
     {
-        v[i].first = a[i];
-        v[i].second = i;
+        v.push_back({ a[i], i });
     }
 
     sort(v.begin(), v.end(), [](const pair<int, int>& a, const pair<int, int>& b) {
         return a.first < b.first;
     });
+
 
     int A = min(v[0].second, v[1].second);
     int B = max(v[0].second, v[1].second);

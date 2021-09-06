@@ -1,70 +1,73 @@
 #include <iostream>
-#include <stack>
 #include <string>
 #include <vector>
 
 using namespace std;
 
+int GetLastZeroIdx(const string& s)
+{
+    for (int i = s.size() - 1; i >= 0; i--)
+    {
+        if (s[i] == '0')
+            return i;
+    }
+
+    return -1;
+}
+
 vector<string> solution(vector<string> s) 
 {
-    vector<string> answer(s.size(), "");
+    vector<string> answer;
 
     for (int i = 0; i < s.size(); i++)
     {
+        string str;
         int cnt = 0;
-        stack<char> st;
 
         for (int j = 0; j < s[i].size(); j++)
         {
-            st.push(s[i][j]);
+            str += s[i][j];
 
-            if (st.size() >= 3)
+            if (str.size() >= 3)
             {
-                char a = st.top();
-                st.pop();
-                char b = st.top();
-                st.pop();
-                char c = st.top();
-                st.pop();
-
-
-                if (a == '0' && b == '1' && c == '1')
-                    cnt++;
-                else
+                if (str.substr(str.size() - 3, 3) == "110")
                 {
-                    st.push(c);
-                    st.push(b);
-                    st.push(a);
+                    cnt++;
+                    str.erase(str.size() - 3, 3);
                 }
             }
         }
 
-        if (cnt == 0)
-            answer[i] = s[i];
-        else
+        int lastIndex = GetLastZeroIdx(str);
+
+        if (lastIndex == -1)
         {
-            int idx = st.size();
-
-            string temp;
-
-            while (!st.empty() && st.top() == '1')
-            {
-                idx--;
-                temp = st.top() + temp;
-                st.pop();
-            }
-
-            while (!st.empty())
-            {
-                temp = st.top() + temp;
-                st.pop();
-            }
-
+            string result;
 
             while (cnt--)
-                temp.insert(idx, "110");
+                result += "110";
 
-            answer[i] = temp;
+            result += str;
+
+            answer.push_back(result);
+        }
+        else
+        {
+            string result;
+
+            for (int j = 0; j < str.size(); j++)
+            {
+                if (j == lastIndex)
+                {
+                    result += str[j];
+                    while (cnt--)
+                        result += "110";
+                }
+                else
+                    result += str[j];
+            }
+
+            answer.push_back(result);
         }
     }
 

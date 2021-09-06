@@ -10,18 +10,18 @@ bool solution(vector<string> phone_book)
 {
 
     unordered_map<string, int> m;
-
-    for (auto i : phone_book)
-        m[i] = 1;
-
+    
+    for (const string& s : phone_book)
+        m[s] = 1;
 
     for (int i = 0; i < phone_book.size(); i++)
     {
-        string n;
+        string temp;
         for (int j = 0; j < phone_book[i].size(); j++)
         {
-            n += phone_book[i][j];
-            if (m.count(n) && n != phone_book[i])
+            temp += phone_book[i][j];
+
+            if (m.count(temp) && temp != phone_book[i])
                 return false;
         }
     }
@@ -31,7 +31,7 @@ bool solution(vector<string> phone_book)
 
 int main()
 {
-    vector<string> numbers = { "119", "97674223", "1195524421" };
+    vector<string> numbers = { "12","123","1235","567","88" };
 
     cout << solution(numbers) << "\n";
 

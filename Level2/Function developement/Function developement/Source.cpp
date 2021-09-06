@@ -11,13 +11,16 @@ vector<int> solution(vector<int> progresses, vector<int> speeds)
     queue<pair<int, int>> q;
     int size = progresses.size();
     int day = 1;
+
     for (int i = 0; i < size; i++)
+    {
         q.push({ progresses[i], speeds[i] });
+    }
+
 
     while (!q.empty())
     {
         int cnt = 0;
-
         while (!q.empty() && q.front().first + q.front().second * day >= 100)
         {
             q.pop();

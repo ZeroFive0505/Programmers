@@ -38,25 +38,25 @@ struct sTree
 
 vector<int> preOrder;
 vector<int> postOrder;
-sTree* root;
 
-void PostOrder(sTree* node)
-{
-    if (node != nullptr)
-    {
-        PostOrder(node->left);
-        PostOrder(node->right);
-        postOrder.push_back(node->id);
-    }
-}
 
 void PreOrder(sTree* node)
 {
-    if (node != nullptr)
+    if (node)
     {
         preOrder.push_back(node->id);
         PreOrder(node->left);
         PreOrder(node->right);
+    }
+}
+
+void PostOrder(sTree* node)
+{
+    if (node)
+    {
+        PostOrder(node->left);
+        PostOrder(node->right);
+        postOrder.push_back(node->id);
     }
 }
 
@@ -65,11 +65,14 @@ vector<vector<int>> solution(vector<vector<int>> nodeinfo)
     vector<vector<int>> answer;
 
     vector<sNode> v;
+
     int id = 1;
+
     for (int i = 0; i < nodeinfo.size(); i++)
     {
         int x = nodeinfo[i][0];
         int y = nodeinfo[i][1];
+
         v.push_back(sNode(x, y, id++));
     }
 
@@ -80,35 +83,39 @@ vector<vector<int>> solution(vector<vector<int>> nodeinfo)
             return a.x < b.x;
     });
 
-    root = nullptr;
+    sTree* root = nullptr;
 
-    root = new sTree(v[0].id, v[0].x, nullptr, nullptr);
-
+    root = new sTree(v.front().id, v.front().x, nullptr, nullptr);
 
     for (int i = 1; i < v.size(); i++)
     {
-        sTree* cur = root;
         sTree* parent = nullptr;
+        sTree* cur = root;
+
         while (cur)
         {
             parent = cur;
-            if (cur->x > v[i].x)
+            if (v[i].x < cur->x)
                 cur = cur->left;
             else
                 cur = cur->right;
         }
 
-        if (v[i].x < parent->x)
+        if (parent->x > v[i].x)
             parent->left = new sTree(v[i].id, v[i].x, nullptr, nullptr);
         else
             parent->right = new sTree(v[i].id, v[i].x, nullptr, nullptr);
     }
+
+
 
     PreOrder(root);
     PostOrder(root);
 
     answer.push_back(preOrder);
     answer.push_back(postOrder);
+    
+
     return answer;
 }
 

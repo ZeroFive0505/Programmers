@@ -23,13 +23,12 @@ int solution(int n, vector<int> weak, vector<int> dist)
 
     sort(dist.begin(), dist.end());
 
-
     do
     {
         for (int i = 0; i < weak.size(); i++)
         {
             int start = temp[i];
-            int end = temp[weak.size() + i - 1];
+            int end = temp[i + weak.size() - 1];
 
             for (int j = 0; j < dist.size(); j++)
             {
@@ -41,12 +40,15 @@ int solution(int n, vector<int> weak, vector<int> dist)
                     break;
                 }
 
-                int nextPoint = upper_bound(temp.begin(), temp.end(), start) - temp.begin();
-                start = temp[nextPoint];
+                int next = upper_bound(temp.begin(), temp.end(), start) - temp.begin();
+
+                start = temp[next];
             }
         }
-
     } while (next_permutation(dist.begin(), dist.end()));
+
+    if (answer == INF)
+        return -1;
 
     return answer;
 }

@@ -20,10 +20,11 @@ long long GCD(int w, int h)
 
 long long solution(int w, int h) 
 {
-    long long answer = 1;
+    long long answer = 0;
     long long gcd = GCD(w, h);
+    long long total = (long long) w * h;
 
-    answer = (long long)w * (long long)h - ((long long)w / gcd + (long long)h / gcd - 1) * gcd;
+    answer = total - ((long long)w / gcd + (long long)h / gcd - 1) * gcd;
 
     return answer;
 }

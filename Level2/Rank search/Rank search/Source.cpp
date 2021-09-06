@@ -11,67 +11,65 @@ using namespace std;
 vector<int> solution(vector<string> info, vector<string> query) 
 {
     vector<int> answer;
-    map<string, vector<int>> info_scores;
+    map<string, vector<int>> hashMap;
 
     for (int i = 0; i < info.size(); i++)
     {
         stringstream ss(info[i]);
-
-        int score;
-
         vector<string> v;
-
         for (int j = 0; j < 4; j++)
         {
-            string tmp;
-            ss >> tmp;
-            v.push_back(tmp);
+            string temp;
+            ss >> temp;
+            v.push_back(temp);
         }
+
+        int score;
 
         ss >> score;
 
         for (int j = 0; j < 16; j++)
         {
-            unsigned int bit = 1;
+            unsigned int mask = 1;
             string key;
-            for (int k = 0; k < 4; k++, bit <<= 1)
+            for (int k = 0; k < 4; k++, mask <<= 1)
             {
-                if (j & bit)
+                if (j & mask)
                     key += v[k];
                 else
-                    key += '-';
+                    key += "-";
             }
 
-            info_scores[key].push_back(score);
+            hashMap[key].push_back(score);
         }
     }
 
-    for (auto& i : info_scores)
-        stable_sort(i.second.begin(), i.second.end());
+    for (auto& kv : hashMap)
+    {
+        sort(kv.second.begin(), kv.second.end());
+    }
 
     for (int i = 0; i < query.size(); i++)
     {
         stringstream ss(query[i]);
         string key;
+        for (int j = 0; j < 7; j++)
+        {
+            string temp;
+
+            ss >> temp;
+
+            if (temp != "and")
+                key += temp;
+        }
 
         int score;
 
-        for (int j = 0; j < 7; j++)
-        {
-            string tmp;
-            ss >> tmp;
-
-            if (tmp != "and")
-                key += tmp;
-        }
-
         ss >> score;
 
-        vector<int> scores = info_scores[key];
+        int idx = lower_bound(hashMap[key].begin(), hashMap[key].end(), score) - hashMap[key].begin();
 
-        int idx = lower_bound(scores.begin(), scores.end(), score) - scores.begin();
-
-        answer.push_back(scores.size() - idx);
+        answer.push_back(hashMap[key].size() - idx);
     }
 
     return answer;
